@@ -4,8 +4,9 @@
   "description": "abstract service model",
   "main": "dist/index.js",
   "scripts": {
-    "test": "test",
-    "compile": "tsc"
+    "compile": "tsc",
+    "compile-test": "tsc -p tsconfig.test.json",
+    "test": "npm run compile-test && test"
   },
   "repository": {
     "type": "git",
