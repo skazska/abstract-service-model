@@ -20,11 +20,11 @@ export class Model implements ModelInterface {
     }
 
     set properties (properties) {
-        this._properties = {...properties};
+        this._properties = properties;
     }
 
     get properties () {
-        return {... this._properties};
+        return this._properties;
     }
 
     get key () {
@@ -40,6 +40,8 @@ export class Model implements ModelInterface {
     }
 
     update (properties) {
+        //TODO objectTools.update currently acts like deepMerge removing props which are not exists (need update
+        // which will remove props valued undefined explicitly
         objectTools.update(this._properties, properties);
         return this;
     }
