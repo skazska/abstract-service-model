@@ -6,28 +6,55 @@ import * as chaiAsPromised from "chai-as-promised"
 use(chaiAsPromised);
 use(sinonChai);
 
+import {ServiceModel} from "../src/index";
 import {Service} from "../src/service";
+import {Model} from "../src/model";
 
-describe('service', () => {
+
+describe('serviceModel', () => {
+    describe('properties', () => {
+        let serviceModel = null;
+        let service = new Service();
+
+        beforeEach(() => {
+            serviceModel = new ServiceModel(service, Model);
+        });
+
+        it('*modelConstructor (read only)', () => {
+            expect(serviceModel).to.have.property('modelConstructor');
+            let modelConstructor = serviceModel.modelConstructor;
+            expect(modelConstructor).to.equal(Model);
+        });
+
+        it('*service (read only)', () => {
+            expect(serviceModel).to.have.property('service');
+            let service = serviceModel.service;
+            expect(service).to.instanceof(Service);
+        });
+
+    });
+
     describe('#create(data :Object) :Promise<any>', () => {
-        let service :Service = null;
-        before(() => {
-            service = new Service({option: 'option'});
+        let serviceModel :ServiceModel = null;
+        let service = new Service();
+
+        beforeEach(() => {
+            serviceModel = new ServiceModel(service, Model);
         });
 
         it('implemented', () => {
-            expect(service).to.have.property('create').which.is.a('function');
+            expect(serviceModel).to.have.property('create').which.is.a('function');
         });
 
-        it('returns undefined', () => {
-            let result = service.create({id: 'id'});
+        it('returns Promise resolves to Model or undefined', () => {
+            let result = serviceModel.create({id: 'id'}, {data: 'data'});
             expect(result).to.eventually.become(undefined);
         });
     });
 
     describe('#read(id :any) :Promise<any>', () => {
         let service :Service = null;
-        before(() => {
+        beforeEach(() => {
             service = new Service({option: 'option'});
         });
 
@@ -43,7 +70,7 @@ describe('service', () => {
 
     describe('#update(id :any, data:Object) :Promise<any>', () => {
         let service :Service = null;
-        before(() => {
+        beforeEach(() => {
             service = new Service({option: 'option'});
         });
 

@@ -18,15 +18,17 @@ export interface ServiceModelInterface {
      */
     readonly service :ServiceInterface;
 
-    load (key :ModelKeyInterface) :Promise<ModelInterface>
+    model (data: any) :ModelInterface;
 
-    list (options :ListOptionsInterface) :Promise<Array<ModelInterface>>
+    load (key :ModelKeyInterface) :Promise<ModelInterface>;
 
-    create (key :ModelKeyInterface, properties :ModelPropertiesInterface) :Promise<ModelInterface>
+    list (options :ListOptionsInterface) :Promise<Array<ModelInterface>>;
 
-    delete (key :ModelKeyInterface) :Promise<boolean>
+    create (key :ModelKeyInterface, properties :ModelPropertiesInterface) :Promise<ModelInterface>;
+
+    delete (key :ModelKeyInterface) :Promise<boolean>;
 }
 
 export interface ServiceModelConstructor {
-    new (id :any, properties :object) :ServiceModelInterface;
+    new (service :ServiceInterface, modelConstructor? :ModelConstructor) :ServiceModelInterface;
 }

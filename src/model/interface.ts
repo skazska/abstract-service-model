@@ -1,18 +1,12 @@
 export interface ModelKeyInterface {
-    [prop :string] :any
+    // [prop :string] :any
 }
 
 export interface ModelPropertiesInterface {
-    [prop :string] :any
+    // [prop :string] :any
 }
 
 export interface ModelInterface {
-    /**
-     * @property
-     * holds key field names
-     */
-    readonly keys :ReadonlyArray<string>;
-
     /**
      * @property
      * holds key fields
@@ -29,7 +23,7 @@ export interface ModelInterface {
      * @property
      * provides combined keys and data fields record
      */
-    readonly data :object;
+    readonly data :any;
 
     /**
      * updates data fields
@@ -38,5 +32,7 @@ export interface ModelInterface {
 }
 
 export interface ModelConstructor {
-    new (id :ModelKeyInterface, properties :ModelPropertiesInterface) :ModelInterface;
+    new (key :ModelKeyInterface, properties :ModelPropertiesInterface) :ModelInterface;
+
+    keyNames: ReadonlyArray<string>;
 }

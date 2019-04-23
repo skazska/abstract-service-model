@@ -4,13 +4,41 @@ import {expect, use}  from 'chai';
 import * as sinonChai from "sinon-chai";
 use(sinonChai);
 
-import {Model} from "../src/model";
+import {Model, ModelKeyInterface, ModelPropertiesInterface} from "../src/model";
+
+interface ITestModelKey extends ModelKeyInterface {
+    id :string
+}
+
+interface ITestModelProperties extends ModelPropertiesInterface {
+    data? :string
+    data1? :string
+}
+
+class TestModel extends Model {
+    constructor(key :ITestModelKey, properties :ITestModelProperties) {
+        super(key, properties);
+    }
+
+    get key() :ITestModelKey {
+        return <ITestModelKey>super.key;
+    }
+
+    get properties() :ITestModelProperties {
+        return <ITestModelProperties>super.properties;
+    }
+
+    set properties(properties :ITestModelProperties) {
+        super.properties = properties;
+    }
+
+}
 
 describe('model', () => {
     describe('scenario1', () => {
-        let model :Model = null;
+        let model :TestModel = null;
         beforeEach(() => {
-            model = new Model({id: 'id'}, {data: 'data'});
+            model = new TestModel({id: 'id'}, {data: 'data'});
         });
         it('*key (read only, immutable)', () => {
             expect(model).to.have.property('key');
@@ -40,15 +68,17 @@ describe('model', () => {
             expect(model).to.have.property('data');
             let data = model.data;
             expect(data).to.eql({id: 'id', data: 'data'});
-            data.id = 'id2';
+            data.data = 'data1';
             expect(model.data).to.eql({id: 'id', data: 'data'});
+
             // try {
             //     model.data = data;
             // } catch (e) {
             //     expect(e).to.be.instanceof(TypeError);
             // }
+
             model.properties.data1 = 'data1';
-            expect(data).to.eql({id: 'id2', data: 'data'});
+            expect(data).to.eql({id: 'id', data: 'data1'});
             expect(model.data).to.eql({id: 'id', data: 'data', data1: 'data1'});
         });
 

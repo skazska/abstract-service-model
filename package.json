@@ -27,13 +27,13 @@
     "@types/sinon-chai": "^3.2.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^5.2.0",
+    "mocha": "^6.1.4",
     "sinon-chai": "^3.3.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.4"
   },
   "dependencies": {
-    "@skazska/tools-data-transform": "0.0.3",
+    "@skazska/tools-data-transform": "^0.0.4",
     "json-pointer": "^0.6.0",
     "jsonschema": "^1.2.4"
   }

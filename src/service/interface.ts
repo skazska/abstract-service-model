@@ -4,11 +4,11 @@ export interface ListOptionsInterface {
 
 export interface ServiceInterface {
 
-    create? (data :object) :Promise<any>
+    create? (data :Object) :Promise<any>
 
     read? (id :any) :Promise<any>
 
-    update? (id :any, data :object) :Promise<any>
+    update? (id :any, data :Object) :Promise<any>
 
     delete? (id :any) :Promise<any>
 
@@ -16,5 +16,5 @@ export interface ServiceInterface {
 }
 
 export interface ServiceConstructor {
-    new (options :object) :ServiceInterface;
+    new (options? :Object) :ServiceInterface;
 }
