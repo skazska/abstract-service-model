@@ -1,34 +1,39 @@
-import {ModelConstructor, ModelInterface, ModelKeyInterface, ModelPropertiesInterface} from "./model/interface";
-import {ServiceInterface} from "./service/interface";
+import {IModelConstructor, IModel, IModelKey, IModelProperties} from "./model/interface";
+import {IService} from "./service/interface";
 
-export interface ListOptionsInterface {
+export interface IQueryOptions {
     //TODO
 }
 
-export interface ServiceModelInterface {
+export interface IQueryResult {
+    items: IModel[];
+    //TODO
+}
+
+export interface IServiceModel {
     /**
      * @property
      * holds key field names
      */
-    readonly modelConstructor :ModelConstructor;
+    readonly modelConstructor :IModelConstructor;
 
     /**
      * @property
      * holds key fields
      */
-    readonly service :ServiceInterface;
+    readonly service :IService;
 
-    model (data: any) :ModelInterface;
+    load (key :IModelKey) :Promise<IModel>;
 
-    load (key :ModelKeyInterface) :Promise<ModelInterface>;
+    query (options :IQueryOptions) :Promise<IQueryResult>;
 
-    list (options :ListOptionsInterface) :Promise<Array<ModelInterface>>;
+    create (key :IModelKey, properties :IModelProperties) :Promise<IModel>;
 
-    create (key :ModelKeyInterface, properties :ModelPropertiesInterface) :Promise<ModelInterface>;
+    save (model :IModel) :Promise<IModel>;
 
-    delete (key :ModelKeyInterface) :Promise<boolean>;
+    delete (key :IModelKey) :Promise<boolean>;
 }
 
-export interface ServiceModelConstructor {
-    new (service :ServiceInterface, modelConstructor? :ModelConstructor) :ServiceModelInterface;
+export interface IServiceModelConstructor {
+    new (service :IService, modelConstructor? :IModelConstructor) :IServiceModel;
 }

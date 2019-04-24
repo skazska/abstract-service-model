@@ -1,76 +1,24 @@
-// const sinon = require('sinon');
-import "mocha";
-import {expect, use}  from "chai";
-import * as sinonChai from "sinon-chai";
-import * as chaiAsPromised from "chai-as-promised"
-use(chaiAsPromised);
-use(sinonChai);
+import {IServiceListOptions, Service} from "../src/service";
 
-import {Service} from "../src/service";
+export class TestService extends Service {
+    async create (data :Object) :Promise<any> {
+        return undefined;
+    }
 
-describe('service', () => {
-    describe('#create(data :Object) :Promise<any>', () => {
-        let service :Service = null;
-        before(() => {
-            service = new Service({option: 'option'});
-        });
+    async read (id :any) :Promise<any> {
+        return Promise.resolve({... id, data: 'data'});
+    }
 
-        it('implemented', () => {
-            expect(service).to.have.property('create').which.is.a('function');
-        });
+    async update (id :any, data :Object) :Promise<any> {
+        return Promise.resolve({... id, ... data});
+    }
 
-        it('returns undefined', () => {
-            let result = service.create({id: 'id'});
-            expect(result).to.eventually.become(undefined);
-        });
-    });
+    async delete (id :any) :Promise<any> {
+        return Promise.resolve(true);
+    }
 
-    describe('#read(id :any) :Promise<any>', () => {
-        let service :Service = null;
-        before(() => {
-            service = new Service({option: 'option'});
-        });
+    async list (options :IServiceListOptions) :Promise<any> {
+        return Promise.resolve([{id: 'id', data: 'data'}]);
+    }
 
-        it('implemented', () => {
-            expect(service).to.have.property('read').which.is.a('function');
-        });
-
-        it('returns undefined', () => {
-            let result = service.read({id: 'id'});
-            expect(result).to.eventually.become(undefined);
-        });
-    });
-
-    describe('#update(id :any, data:Object) :Promise<any>', () => {
-        let service :Service = null;
-        before(() => {
-            service = new Service({option: 'option'});
-        });
-
-        it('implemented', () => {
-            expect(service).to.have.property('update').which.is.a('function');
-        });
-
-        it('returns undefined', () => {
-            let result = service.update({id: 'id'}, {data: 'data'});
-            expect(result).to.eventually.become(undefined);
-        });
-    });
-
-    describe('#delete(id :any) :Promise<any>', () => {
-        let service :Service = null;
-        beforeEach(() => {
-            service = new Service({option: 'option'});
-        });
-
-        it('implemented', () => {
-            expect(service).to.have.property('delete').which.is.a('function');
-        });
-
-        it('returns undefined', () => {
-            let result = service.delete({id: 'id'});
-            expect(result).to.eventually.become(undefined);
-        });
-    });
-
-});
+}

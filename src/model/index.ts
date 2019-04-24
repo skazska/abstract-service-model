@@ -1,28 +1,28 @@
-import {ModelKeyInterface, ModelInterface, ModelPropertiesInterface} from "./interface"
+import {IModelKey, IModel, IModelProperties} from "./interface"
 import {object as objectTools} from "@skazska/tools-data-transform";
 
 export * from "./interface";
 
-export class Model implements ModelInterface {
+export class Model implements IModel {
     static keyNames: ReadonlyArray<string> = [];
 
-    protected _key :ModelKeyInterface;
-    protected _properties :ModelPropertiesInterface;
+    protected _key :IModelKey;
+    protected _properties :IModelProperties;
 
-    constructor (key :ModelKeyInterface, properties :ModelPropertiesInterface) {
+    constructor (key :IModelKey, properties :IModelProperties) {
         this.properties = properties;
         this._key = {... key};
     }
 
-    set properties (properties :ModelPropertiesInterface) {
+    set properties (properties :IModelProperties) {
         this._properties = properties;
     }
 
-    get properties () :ModelPropertiesInterface {
+    get properties () :IModelProperties {
         return this._properties;
     }
 
-    get key () :ModelKeyInterface {
+    get key () :IModelKey {
         return {... this._key};
     }
 
@@ -30,7 +30,7 @@ export class Model implements ModelInterface {
         return {... this.properties, ... this.key}
     }
 
-    update (properties :ModelPropertiesInterface) :ModelInterface {
+    update (properties :IModelProperties) :IModel {
         objectTools.update(this._properties, properties);
         return this;
     }

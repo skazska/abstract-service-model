@@ -1,8 +1,8 @@
-import {ListOptionsInterface, ServiceInterface} from "./interface";
+import {IServiceListOptions, IService} from "./interface";
 
 export * from "./interface";
 
-export class Service implements ServiceInterface {
+export class Service implements IService {
     _options: object;
 
     constructor (options? :Object) {
@@ -25,7 +25,7 @@ export class Service implements ServiceInterface {
         return undefined;
     }
 
-    async list (options :ListOptionsInterface) :Promise<any> {
+    async list (options :IServiceListOptions) :Promise<any> {
         return undefined;
     }
 }

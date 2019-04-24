@@ -1,8 +1,8 @@
-export interface ListOptionsInterface {
+export interface IServiceListOptions {
     //TODO
 }
 
-export interface ServiceInterface {
+export interface IService {
 
     create? (data :Object) :Promise<any>
 
@@ -12,9 +12,9 @@ export interface ServiceInterface {
 
     delete? (id :any) :Promise<any>
 
-    list? (options :ListOptionsInterface) :Promise<any>
+    list? (options :IServiceListOptions) :Promise<any>
 }
 
-export interface ServiceConstructor {
-    new (options? :Object) :ServiceInterface;
+export interface IServiceConstructor {
+    new (options? :Object) :IService;
 }

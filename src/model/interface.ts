@@ -1,23 +1,23 @@
-export interface ModelKeyInterface {
+export interface IModelKey {
     // [prop :string] :any
 }
 
-export interface ModelPropertiesInterface {
+export interface IModelProperties {
     // [prop :string] :any
 }
 
-export interface ModelInterface {
+export interface IModel {
     /**
      * @property
      * holds key fields
      */
 
-    readonly key :ModelKeyInterface;
+    readonly key :IModelKey;
     /**
      * @property
      * holds data fields
      */
-    properties :ModelPropertiesInterface;
+    properties :IModelProperties;
 
     /**
      * @property
@@ -28,11 +28,11 @@ export interface ModelInterface {
     /**
      * updates data fields
      */
-    update (properties :ModelPropertiesInterface) :ModelInterface;
+    update (properties :IModelProperties) :IModel;
 }
 
-export interface ModelConstructor {
-    new (key :ModelKeyInterface, properties :ModelPropertiesInterface) :ModelInterface;
+export interface IModelConstructor {
+    new (key :IModelKey, properties :IModelProperties) :IModel;
 
     keyNames: ReadonlyArray<string>;
 }

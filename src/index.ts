@@ -1,15 +1,15 @@
-import {ModelConstructor, ModelInterface, ModelKeyInterface, ModelPropertiesInterface} from "./model/interface";
-import {ServiceInterface} from "./service/interface";
+import {IModelConstructor, IModel, IModelKey, IModelProperties} from "./model/interface";
+import {IService} from "./service/interface";
 import {Model} from "./model";
-import {ListOptionsInterface, ServiceModelInterface} from "./interface";
+import {IQueryResult, IQueryOptions, IServiceModel} from "./interface";
 
 export * from "./interface";
 
-export class ServiceModel implements ServiceModelInterface {
-    _service :ServiceInterface;
-    _modelConstructor :ModelConstructor;
+export class ServiceModel implements IServiceModel {
+    _service :IService;
+    _modelConstructor :IModelConstructor;
 
-    constructor (service :ServiceInterface, modelConstructor? :ModelConstructor) {
+    constructor (service :IService, modelConstructor? :IModelConstructor) {
         this._service = service;
         if (!modelConstructor) {
             this._modelConstructor = Model;
@@ -18,15 +18,15 @@ export class ServiceModel implements ServiceModelInterface {
         }
     }
 
-    get modelConstructor () :ModelConstructor {
+    get modelConstructor () :IModelConstructor {
         return this._modelConstructor;
     }
 
-    get service () :ServiceInterface {
+    get service () :IService {
         return this._service;
     }
 
-    model (data: any) :ModelInterface {
+    protected model (data :any) :IModel {
         let props = {... data};
         let key = this._modelConstructor.keyNames
             .reduce((key, name) => {
@@ -37,23 +37,36 @@ export class ServiceModel implements ServiceModelInterface {
         return new this._modelConstructor(key, props);
     }
 
-    async load (key :ModelKeyInterface) :Promise<ModelInterface> {
+    protected updateModel (model :IModel, data :any) :IModel {
+        let props = {... data};
+        this._modelConstructor.keyNames.forEach(name => { delete props[name]; });
+        model.update(props);
+        return model;
+    }
+
+    async load (key :IModelKey) :Promise<IModel> {
         let data = await this._service.read(key);
         return this.model(data);
     }
 
-    async list (options :ListOptionsInterface) :Promise<Array<ModelInterface>> {
+    async query (options :IQueryOptions) :Promise<IQueryResult> {
         let data = await this._service.list(options);
-        return data.map(item => this.model(item));
+        return {items: data.map(item => this.model(item))};
     }
 
-    create (key :ModelKeyInterface, properties :ModelPropertiesInterface) :Promise<ModelInterface> {
+    create (key :IModelKey, properties :IModelProperties) :Promise<IModel> {
         let model = new this._modelConstructor(key, properties);
         return Promise.resolve(model);
     }
 
-    async delete (key :ModelKeyInterface) :Promise<boolean> {
+    async delete (key :IModelKey) :Promise<any> {
         let data = await this._service.delete(key);
         return data;
     }
+
+    async save (model :IModel) :Promise<IModel> {
+        let data = await this._service.update(model.key, model.properties);
+        return this.updateModel(model, data);
+    }
+
 }
