@@ -7,17 +7,17 @@ use(chaiAsPromised);
 use(sinonChai);
 
 import {ServiceModel} from "../src/index";
-import {TestService} from "./service";
+import {TestService} from "./storage";
 import {TestModel} from "./model";
 
 
 describe('serviceModel', () => {
     describe('properties', () => {
         let serviceModel = null;
-        let service = new TestService();
+        let storage = new TestService();
 
         beforeEach(() => {
-            serviceModel = new ServiceModel(service, TestModel);
+            serviceModel = new ServiceModel(storage, TestModel);
         });
 
         it('*modelConstructor (read only)', () => {
@@ -26,20 +26,20 @@ describe('serviceModel', () => {
             expect(modelConstructor).to.equal(TestModel);
         });
 
-        it('*service (read only)', () => {
-            expect(serviceModel).to.have.property('service');
-            let service = serviceModel.service;
-            expect(service).to.instanceof(TestService);
+        it('*storage (read only)', () => {
+            expect(serviceModel).to.have.property('storage');
+            let storage = serviceModel.storage;
+            expect(storage).to.instanceof(TestService);
         });
 
     });
 
     describe('#create(data :Object) :Promise<any>', () => {
         let serviceModel :ServiceModel = null;
-        let service = new TestService();
+        let storage = new TestService();
 
         beforeEach(() => {
-            serviceModel = new ServiceModel(service, TestModel);
+            serviceModel = new ServiceModel(storage, TestModel);
         });
 
         it('implemented', () => {
@@ -53,20 +53,20 @@ describe('serviceModel', () => {
         });
     });
 
-    describe('#query(options :IQueryOptions) ::Promise<Array<IModel>>', () => {
+    describe('#list(options :IListOptions) ::Promise<Array<IModel>>', () => {
         let serviceModel :ServiceModel = null;
-        let service = new TestService();
+        let storage = new TestService();
 
         beforeEach(() => {
-            serviceModel = new ServiceModel(service, TestModel);
+            serviceModel = new ServiceModel(storage, TestModel);
         });
 
         it('implemented', () => {
-            expect(serviceModel).to.have.property('query').which.is.a('function');
+            expect(serviceModel).to.have.property('list').which.is.a('function');
         });
 
         it('returns undefined', async () => {
-            let result = await serviceModel.query({id: 'id'});
+            let result = await serviceModel.list({id: 'id'});
             expect(result).to.have.property('items').which.is.an('array');
             let model = result.items[0];
             expect(model).to.be.instanceof(TestModel);
@@ -74,12 +74,12 @@ describe('serviceModel', () => {
         });
     });
 
-    describe('#read(id :any) :Promise<any>', () => {
+    describe('#load(id :any) :Promise<IModel>', () => {
         let serviceModel :ServiceModel = null;
-        let service = new TestService();
+        let storage = new TestService();
 
         beforeEach(() => {
-            serviceModel = new ServiceModel(service, TestModel);
+            serviceModel = new ServiceModel(storage, TestModel);
         });
 
         it('implemented', () => {
@@ -93,12 +93,12 @@ describe('serviceModel', () => {
         });
     });
 
-    describe('#update(id :any, data:Object) :Promise<any>', () => {
+    describe('#save(model: IModel) :Promise<IModel>', () => {
         let serviceModel :ServiceModel = null;
-        let service = new TestService();
+        let storage = new TestService();
 
         beforeEach(() => {
-            serviceModel = new ServiceModel(service, TestModel);
+            serviceModel = new ServiceModel(storage, TestModel);
         });
 
         it('implemented', () => {
@@ -113,20 +113,20 @@ describe('serviceModel', () => {
         });
     });
 
-    describe('#delete(id :any) :Promise<any>', () => {
+    describe('#erase(id :any) :Promise<any>', () => {
         let serviceModel :ServiceModel = null;
-        let service = new TestService();
+        let storage = new TestService();
 
         beforeEach(() => {
-            serviceModel = new ServiceModel(service, TestModel);
+            serviceModel = new ServiceModel(storage, TestModel);
         });
 
         it('implemented', () => {
-            expect(serviceModel).to.have.property('delete').which.is.a('function');
+            expect(serviceModel).to.have.property('erase').which.is.a('function');
         });
 
         it('returns undefined', async () => {
-            let result = await serviceModel.delete({id: 'id'});
+            let result = await serviceModel.erase({id: 'id'});
             expect(result).to.equal(true);
         });
     });

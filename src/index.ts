@@ -1,16 +1,16 @@
 import {IModelConstructor, IModel, IModelKey, IModelProperties} from "./model/interface";
-import {IService} from "./service/interface";
+import {IStorage} from "./storage/interface";
 import {Model} from "./model";
-import {IQueryResult, IQueryOptions, IServiceModel} from "./interface";
+import {IListResult, IListOptions, IServiceModel} from "./interface";
 
 export * from "./interface";
 
 export class ServiceModel implements IServiceModel {
-    _service :IService;
+    _service :IStorage;
     _modelConstructor :IModelConstructor;
 
-    constructor (service :IService, modelConstructor? :IModelConstructor) {
-        this._service = service;
+    constructor (storage :IStorage, modelConstructor? :IModelConstructor) {
+        this._service = storage;
         if (!modelConstructor) {
             this._modelConstructor = Model;
         } else {
@@ -22,7 +22,7 @@ export class ServiceModel implements IServiceModel {
         return this._modelConstructor;
     }
 
-    get service () :IService {
+    get storage () :IStorage {
         return this._service;
     }
 
@@ -49,17 +49,18 @@ export class ServiceModel implements IServiceModel {
         return this.model(data);
     }
 
-    async query (options :IQueryOptions) :Promise<IQueryResult> {
-        let data = await this._service.list(options);
+    async list (options :IListOptions) :Promise<IListResult> {
+        let data = await this._service.query(options);
         return {items: data.map(item => this.model(item))};
     }
 
     create (key :IModelKey, properties :IModelProperties) :Promise<IModel> {
+
         let model = new this._modelConstructor(key, properties);
         return Promise.resolve(model);
     }
 
-    async delete (key :IModelKey) :Promise<any> {
+    async erase (key :IModelKey) :Promise<any> {
         let data = await this._service.delete(key);
         return data;
     }

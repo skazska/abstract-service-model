@@ -1,4 +1,4 @@
-import {IServiceListOptions, Service} from "../src/service";
+import {IQueryOptions, Service} from "../src/storage";
 
 export class TestService extends Service {
     async create (data :Object) :Promise<any> {
@@ -17,7 +17,7 @@ export class TestService extends Service {
         return Promise.resolve(true);
     }
 
-    async list (options :IServiceListOptions) :Promise<any> {
+    async query (options :IQueryOptions) :Promise<any> {
         return Promise.resolve([{id: 'id', data: 'data'}]);
     }
 

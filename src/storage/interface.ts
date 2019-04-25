@@ -1,8 +1,8 @@
-export interface IServiceListOptions {
+export interface IQueryOptions {
     //TODO
 }
 
-export interface IService {
+export interface IStorage {
 
     create? (data :Object) :Promise<any>
 
@@ -12,9 +12,9 @@ export interface IService {
 
     delete? (id :any) :Promise<any>
 
-    list? (options :IServiceListOptions) :Promise<any>
+    query? (options :IQueryOptions) :Promise<any>
 }
 
 export interface IServiceConstructor {
-    new (options? :Object) :IService;
+    new (options? :Object) :IStorage;
 }

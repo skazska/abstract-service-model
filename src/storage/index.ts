@@ -1,8 +1,8 @@
-import {IServiceListOptions, IService} from "./interface";
+import {IQueryOptions, IStorage} from "./interface";
 
 export * from "./interface";
 
-export class Service implements IService {
+export class Service implements IStorage {
     _options: object;
 
     constructor (options? :Object) {
@@ -25,7 +25,7 @@ export class Service implements IService {
         return undefined;
     }
 
-    async list (options :IServiceListOptions) :Promise<any> {
+    async query (options :IQueryOptions) :Promise<any> {
         return undefined;
     }
 }

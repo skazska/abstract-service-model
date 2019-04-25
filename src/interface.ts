@@ -1,11 +1,11 @@
 import {IModelConstructor, IModel, IModelKey, IModelProperties} from "./model/interface";
-import {IService} from "./service/interface";
+import {IStorage} from "./storage/interface";
 
-export interface IQueryOptions {
+export interface IListOptions {
     //TODO
 }
 
-export interface IQueryResult {
+export interface IListResult {
     items: IModel[];
     //TODO
 }
@@ -21,19 +21,19 @@ export interface IServiceModel {
      * @property
      * holds key fields
      */
-    readonly service :IService;
+    readonly storage :IStorage;
 
     load (key :IModelKey) :Promise<IModel>;
 
-    query (options :IQueryOptions) :Promise<IQueryResult>;
+    list (options :IListOptions) :Promise<IListResult>;
 
     create (key :IModelKey, properties :IModelProperties) :Promise<IModel>;
 
     save (model :IModel) :Promise<IModel>;
 
-    delete (key :IModelKey) :Promise<boolean>;
+    erase (key :IModelKey) :Promise<boolean>;
 }
 
 export interface IServiceModelConstructor {
-    new (service :IService, modelConstructor? :IModelConstructor) :IServiceModel;
+    new (storage :IStorage, modelConstructor? :IModelConstructor) :IServiceModel;
 }

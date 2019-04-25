@@ -6,85 +6,85 @@ import * as chaiAsPromised from "chai-as-promised"
 use(chaiAsPromised);
 use(sinonChai);
 
-import {Service} from "../src/service";
+import {Service} from "../src/storage";
 
-describe('service', () => {
+describe('storage', () => {
     describe('#create(data :Object) :Promise<any>', () => {
-        let service :Service = null;
+        let storage :Service = null;
         before(() => {
-            service = new Service({option: 'option'});
+            storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(service).to.have.property('create').which.is.a('function');
+            expect(storage).to.have.property('create').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = service.create({id: 'id'});
+            let result = storage.create({id: 'id'});
             expect(result).to.eventually.become(undefined);
         });
     });
 
     describe('#read(id :any) :Promise<any>', () => {
-        let service :Service = null;
+        let storage :Service = null;
         before(() => {
-            service = new Service({option: 'option'});
+            storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(service).to.have.property('read').which.is.a('function');
+            expect(storage).to.have.property('read').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = service.read({id: 'id'});
+            let result = storage.read({id: 'id'});
             expect(result).to.eventually.become(undefined);
         });
     });
 
-    describe('#list(options :IServiceListOptions) :Promise<any>', () => {
-        let service :Service = null;
+    describe('#query(options :IQueryOptions) :Promise<any>', () => {
+        let storage :Service = null;
         before(() => {
-            service = new Service({option: 'option'});
+            storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(service).to.have.property('list').which.is.a('function');
+            expect(storage).to.have.property('query').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = service.list({id: 'id'});
+            let result = storage.query({id: 'id'});
             expect(result).to.eventually.become(undefined);
         });
     });
 
     describe('#update(id :any, data:Object) :Promise<any>', () => {
-        let service :Service = null;
+        let storage :Service = null;
         before(() => {
-            service = new Service({option: 'option'});
+            storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(service).to.have.property('update').which.is.a('function');
+            expect(storage).to.have.property('update').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = service.update({id: 'id'}, {data: 'data'});
+            let result = storage.update({id: 'id'}, {data: 'data'});
             expect(result).to.eventually.become(undefined);
         });
     });
 
-    describe('#delete(id :any) :Promise<any>', () => {
-        let service :Service = null;
+    describe('#erase(id :any) :Promise<any>', () => {
+        let storage :Service = null;
         beforeEach(() => {
-            service = new Service({option: 'option'});
+            storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(service).to.have.property('delete').which.is.a('function');
+            expect(storage).to.have.property('delete').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = service.delete({id: 'id'});
+            let result = storage.delete({id: 'id'});
             expect(result).to.eventually.become(undefined);
         });
     });
