@@ -1,18 +1,26 @@
-export interface IQueryOptions {
-    //TODO
+import {IModelKey, IModelProperties} from "../model";
+
+export interface IExtractOptions {
+}
+
+export interface ILoadOptions {
+}
+
+export interface ISaveOptions {
+}
+
+export interface IEraseOptions {
 }
 
 export interface IStorage {
 
-    create? (data :Object) :Promise<any>
+    load? (id :IModelKey, options?: ILoadOptions) :Promise<any>
 
-    read? (id :any) :Promise<any>
+    save? (id :IModelKey, data :IModelProperties, options?: ISaveOptions) :Promise<any>
 
-    update? (id :any, data :Object) :Promise<any>
+    erase? (id :IModelKey, options?: IEraseOptions) :Promise<any>
 
-    delete? (id :any) :Promise<any>
-
-    query? (options :IQueryOptions) :Promise<any>
+    extract? (options :IExtractOptions) :Promise<any>
 }
 
 export interface IServiceConstructor {

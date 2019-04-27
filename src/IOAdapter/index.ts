@@ -1,11 +1,11 @@
 import {IModelConstructor, IModel, IModelKey, IModelProperties} from "./model/interface";
 import {IStorage} from "./storage/interface";
 import {Model} from "./model";
-import {IListResult, IListOptions, IServiceModel} from "./interface";
+import {IListResult, IListOptions, IIOAdapter} from "./interface";
 
 export * from "./interface";
 
-export class ServiceModel implements IServiceModel {
+export class ServiceModel implements IIOAdapter {
     _service :IStorage;
     _modelConstructor :IModelConstructor;
 

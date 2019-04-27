@@ -9,66 +9,66 @@ use(sinonChai);
 import {Service} from "../src/storage";
 
 describe('storage', () => {
-    describe('#create(data :Object) :Promise<any>', () => {
+    // describe('#create(data :Object) :Promise<any>', () => {
+    //     let storage :Service = null;
+    //     before(() => {
+    //         storage = new Service({option: 'option'});
+    //     });
+    //
+    //     it('implemented', () => {
+    //         expect(storage).to.have.property('create').which.is.a('function');
+    //     });
+    //
+    //     it('returns undefined', () => {
+    //         let result = storage.create({id: 'id'});
+    //         expect(result).to.eventually.become(undefined);
+    //     });
+    // });
+
+    describe('#load(id :any) :Promise<any>', () => {
         let storage :Service = null;
         before(() => {
             storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(storage).to.have.property('create').which.is.a('function');
+            expect(storage).to.have.property('load').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = storage.create({id: 'id'});
+            let result = storage.load({id: 'id'});
             expect(result).to.eventually.become(undefined);
         });
     });
 
-    describe('#read(id :any) :Promise<any>', () => {
+    describe('#extract(options :IExtractOptions) :Promise<any>', () => {
         let storage :Service = null;
         before(() => {
             storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(storage).to.have.property('read').which.is.a('function');
+            expect(storage).to.have.property('extract').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = storage.read({id: 'id'});
+            let result = storage.extract({id: 'id'});
             expect(result).to.eventually.become(undefined);
         });
     });
 
-    describe('#query(options :IQueryOptions) :Promise<any>', () => {
+    describe('#save(id :any, data:Object) :Promise<any>', () => {
         let storage :Service = null;
         before(() => {
             storage = new Service({option: 'option'});
         });
 
         it('implemented', () => {
-            expect(storage).to.have.property('query').which.is.a('function');
+            expect(storage).to.have.property('save').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = storage.query({id: 'id'});
-            expect(result).to.eventually.become(undefined);
-        });
-    });
-
-    describe('#update(id :any, data:Object) :Promise<any>', () => {
-        let storage :Service = null;
-        before(() => {
-            storage = new Service({option: 'option'});
-        });
-
-        it('implemented', () => {
-            expect(storage).to.have.property('update').which.is.a('function');
-        });
-
-        it('returns undefined', () => {
-            let result = storage.update({id: 'id'}, {data: 'data'});
+            let result = storage.save({id: 'id'}, {data: 'data'});
             expect(result).to.eventually.become(undefined);
         });
     });
@@ -80,11 +80,11 @@ describe('storage', () => {
         });
 
         it('implemented', () => {
-            expect(storage).to.have.property('delete').which.is.a('function');
+            expect(storage).to.have.property('erase').which.is.a('function');
         });
 
         it('returns undefined', () => {
-            let result = storage.delete({id: 'id'});
+            let result = storage.erase({id: 'id'});
             expect(result).to.eventually.become(undefined);
         });
     });

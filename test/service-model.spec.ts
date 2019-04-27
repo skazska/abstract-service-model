@@ -53,7 +53,7 @@ describe('serviceModel', () => {
         });
     });
 
-    describe('#list(options :IListOptions) ::Promise<Array<IModel>>', () => {
+    describe('#list(options :IListOptions) :Promise<Array<IModel>>', () => {
         let serviceModel :ServiceModel = null;
         let storage = new TestService();
 
@@ -74,7 +74,7 @@ describe('serviceModel', () => {
         });
     });
 
-    describe('#load(id :any) :Promise<IModel>', () => {
+    describe('#read(id :any) :Promise<IModel>', () => {
         let serviceModel :ServiceModel = null;
         let storage = new TestService();
 
@@ -83,17 +83,17 @@ describe('serviceModel', () => {
         });
 
         it('implemented', () => {
-            expect(serviceModel).to.have.property('load').which.is.a('function');
+            expect(serviceModel).to.have.property('read').which.is.a('function');
         });
 
         it('returns undefined', async () => {
-            let result = await serviceModel.load({id: 'id'});
+            let result = await serviceModel.read({id: 'id'});
             expect(result).to.be.instanceof(TestModel);
             expect(result.data).to.eql({id: 'id', data: 'data'});
         });
     });
 
-    describe('#save(model: IModel) :Promise<IModel>', () => {
+    describe('#update(model: IModel) :Promise<IModel>', () => {
         let serviceModel :ServiceModel = null;
         let storage = new TestService();
 
@@ -102,18 +102,18 @@ describe('serviceModel', () => {
         });
 
         it('implemented', () => {
-            expect(serviceModel).to.have.property('save').which.is.a('function');
+            expect(serviceModel).to.have.property('update').which.is.a('function');
         });
 
         it('returns undefined', async () => {
             let model = new TestModel({id: 'id'}, {data: 'data'});
-            let result = await serviceModel.save(model);
+            let result = await serviceModel.update(model);
             expect(result).to.be.instanceof(TestModel);
             expect(result.data).to.eql({id: 'id', data: 'data'});
         });
     });
 
-    describe('#erase(id :any) :Promise<any>', () => {
+    describe('#delete(id :any) :Promise<any>', () => {
         let serviceModel :ServiceModel = null;
         let storage = new TestService();
 
@@ -122,11 +122,11 @@ describe('serviceModel', () => {
         });
 
         it('implemented', () => {
-            expect(serviceModel).to.have.property('erase').which.is.a('function');
+            expect(serviceModel).to.have.property('delete').which.is.a('function');
         });
 
         it('returns undefined', async () => {
-            let result = await serviceModel.erase({id: 'id'});
+            let result = await serviceModel.delete({id: 'id'});
             expect(result).to.equal(true);
         });
     });

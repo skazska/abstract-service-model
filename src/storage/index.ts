@@ -1,4 +1,5 @@
-import {IQueryOptions, IStorage} from "./interface";
+import {IEraseOptions, IExtractOptions, ILoadOptions, ISaveOptions, IStorage} from "./interface";
+import {IModelKey, IModelProperties} from "../model";
 
 export * from "./interface";
 
@@ -9,23 +10,19 @@ export class Service implements IStorage {
         this._options = options;
     }
 
-    async create (data :Object) :Promise<any> {
+    async load (id :IModelKey, options?: ILoadOptions) :Promise<any> {
         return undefined;
     }
 
-    async read (id :any) :Promise<any> {
+    async save (id: IModelKey, data :IModelProperties, options?: ISaveOptions) :Promise<any> {
         return undefined;
     }
 
-    async update (id :any, data :Object) :Promise<any> {
+    async erase (id :any, options? :IEraseOptions) :Promise<any> {
         return undefined;
     }
 
-    async delete (id :any) :Promise<any> {
-        return undefined;
-    }
-
-    async query (options :IQueryOptions) :Promise<any> {
+    async extract (options :IExtractOptions) :Promise<any> {
         return undefined;
     }
 }

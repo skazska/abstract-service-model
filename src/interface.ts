@@ -11,11 +11,6 @@ export interface IListResult {
 }
 
 export interface IServiceModel {
-    /**
-     * @property
-     * holds key field names
-     */
-    readonly modelConstructor :IModelConstructor;
 
     /**
      * @property
@@ -23,15 +18,15 @@ export interface IServiceModel {
      */
     readonly storage :IStorage;
 
-    load (key :IModelKey) :Promise<IModel>;
+    read (key :any) :Promise<any>;
 
-    list (options :IListOptions) :Promise<IListResult>;
+    list(options :any) :Promise<any>;
 
-    create (key :IModelKey, properties :IModelProperties) :Promise<IModel>;
+    create (data :any, key? :any) :Promise<any>;
 
-    save (model :IModel) :Promise<IModel>;
+    update (key :any, data :any) :Promise<IModel>;
 
-    erase (key :IModelKey) :Promise<boolean>;
+    delete (key :any) :Promise<any>;
 }
 
 export interface IServiceModelConstructor {

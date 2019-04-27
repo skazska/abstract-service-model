@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2015",
-    "sourceMap": false,
-    "outDir": "dist"
+    "target": "es2017",
+    "inlineSourceMap": true,
+    "outDir": "./dist"
   },
   "include": [
     "src/**/*",

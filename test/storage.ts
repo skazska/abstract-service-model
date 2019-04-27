@@ -1,23 +1,20 @@
-import {IQueryOptions, Service} from "../src/storage";
+import {IExtractOptions, Service} from "../src/storage";
 
 export class TestService extends Service {
-    async create (data :Object) :Promise<any> {
-        return undefined;
-    }
 
-    async read (id :any) :Promise<any> {
+    async load (id :any) :Promise<any> {
         return Promise.resolve({... id, data: 'data'});
     }
 
-    async update (id :any, data :Object) :Promise<any> {
+    async save (id: any, data :Object) :Promise<any> {
         return Promise.resolve({... id, ... data});
     }
 
-    async delete (id :any) :Promise<any> {
+    async erase (id :any) :Promise<any> {
         return Promise.resolve(true);
     }
 
-    async query (options :IQueryOptions) :Promise<any> {
+    async extract (options :IExtractOptions) :Promise<any> {
         return Promise.resolve([{id: 'id', data: 'data'}]);
     }
 
