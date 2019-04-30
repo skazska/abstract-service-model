@@ -53,7 +53,7 @@ describe('serviceModel', () => {
         });
     });
 
-    describe('#list(options :IListOptions) :Promise<Array<IModel>>', () => {
+    describe('#list(options :IASMListOptions) :Promise<Array<IModel>>', () => {
         let serviceModel :ServiceModel = null;
         let storage = new TestService();
 

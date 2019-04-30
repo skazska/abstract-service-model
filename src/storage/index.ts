@@ -1,4 +1,4 @@
-import {IEraseOptions, IExtractOptions, ILoadOptions, ISaveOptions, IStorage} from "./interface";
+import {IEraseOptions, IExtractOptions, ILoadOptions, ISaveOptions, IStorage} from ".";
 import {IModelKey, IModelProperties} from "../model";
 
 export * from "./interface";

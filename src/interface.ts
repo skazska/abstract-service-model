@@ -1,34 +1,54 @@
-import {IModelConstructor, IModel, IModelKey, IModelProperties} from "./model/interface";
-import {IStorage} from "./storage/interface";
+import {IStorage} from "./storage";
+import {IIOAdapter} from "./io-adapter";
 
-export interface IListOptions {
-    //TODO
+export interface TASMOptionsRecursive {
 }
 
-export interface IListResult {
-    items: IModel[];
-    //TODO
+export interface IASMOptions {
+    recursive? : TASMOptionsRecursive;
+}
+
+export interface IASMListOptions extends IASMOptions {
+}
+
+export interface IASMReadOptions extends IASMOptions {
+}
+
+export interface IASMCreateOptions extends IASMOptions {
+}
+
+export interface IASMUpdateOptions extends IASMOptions {
+}
+
+export interface IASMDeleteOptions extends IASMOptions {
 }
 
 export interface IServiceModel {
 
     /**
      * @property
-     * holds key fields
+     * storage service
      */
     readonly storage :IStorage;
 
-    read (key :any) :Promise<any>;
+    /**
+     * @property
+     * IO adapter
+     */
+    readonly ioAdapter :IIOAdapter;
 
-    list(options :any) :Promise<any>;
 
-    create (data :any, key? :any) :Promise<any>;
+    read? (key :any, options?: IASMReadOptions) :Promise<any>;
 
-    update (key :any, data :any) :Promise<IModel>;
+    list? (params :any, options? :IASMListOptions) :Promise<any>;
 
-    delete (key :any) :Promise<any>;
+    create? (data :any, key? :any, options? :IASMCreateOptions) :Promise<any>;
+
+    update? (data :any, key? :any, options? :IASMUpdateOptions) :Promise<any>;
+
+    delete? (key :any, options? :IASMDeleteOptions) :Promise<any>;
 }
 
 export interface IServiceModelConstructor {
-    new (storage :IStorage, modelConstructor? :IModelConstructor) :IServiceModel;
+    new (storage :IStorage, ioAdapter :IIOAdapter) :IServiceModel;
 }

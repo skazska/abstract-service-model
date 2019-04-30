@@ -1,73 +1,60 @@
-import {IModelConstructor, IModel, IModelKey, IModelProperties} from "./model/interface";
-import {IStorage} from "./storage/interface";
-import {Model} from "./model";
-import {IListResult, IListOptions, IServiceModel} from "./interface";
+import {IModel} from "./model";
+import {ILoadOptions, IStorage} from "./storage";
+import {
+    IASMListOptions,
+    IServiceModel,
+    IASMReadOptions,
+    IASMCreateOptions,
+    IASMUpdateOptions,
+    IASMDeleteOptions
+} from "./interface";
 
-export * from "./interface";
+import {IIOAdapter, IToModelOptions} from "./io-adapter";
 
 export class ServiceModel implements IServiceModel {
     _service :IStorage;
-    _modelConstructor :IModelConstructor;
+    _ioAdapter :IIOAdapter;
+    _navigator: INavigator;
 
-    constructor (storage :IStorage, modelConstructor? :IModelConstructor) {
+    constructor (storage :IStorage, ioAdapter :IIOAdapter) {
         this._service = storage;
-        if (!modelConstructor) {
-            this._modelConstructor = Model;
-        } else {
-            this._modelConstructor = modelConstructor;
-        }
+        this._ioAdapter = ioAdapter;
     }
 
-    get modelConstructor () :IModelConstructor {
-        return this._modelConstructor;
+    get ioAdapter () :IIOAdapter {
+        return this._ioAdapter;
     }
 
     get storage () :IStorage {
         return this._service;
     }
 
-    protected model (data :any) :IModel {
-        let props = {... data};
-        let key = this._modelConstructor.keyNames
-            .reduce((key, name) => {
-                key[name] = data[name];
-                delete props[name];
-                return key;
-            }, {});
-        return new this._modelConstructor(key, props);
+    async read (key :any, options? :IASMReadOptions) :Promise<any> {
+        let modelKey = this._ioAdapter.key(key, <IToModelOptions>options);
+        let model = await this._service.load(modelKey, <ILoadOptions>options);
+        return this._ioAdapter.data(model, options);
     }
 
-    protected updateModel (model :IModel, data :any) :IModel {
-        let props = {... data};
-        this._modelConstructor.keyNames.forEach(name => { delete props[name]; });
-        model.update(props);
-        return model;
+    async list (options :IASMListOptions) :Promise<any> {
+        let list = await this._service.extract(options);
+        return this._ioAdapter.listData(list, options);
     }
 
-    async read (key :IModelKey) :Promise<IModel> {
-        let data = await this._service.load(key);
-        return this.model(data);
+    async create (data: any, key? :any, options? :IASMCreateOptions) :Promise<any> {
+        let model = this._ioAdapter.model(key, data, options);
+        model = await this._service.save(model.key, model.properties, options);
+        return this._ioAdapter.data(model, options);
     }
 
-    async list (options :IListOptions) :Promise<IListResult> {
-        let data = await this._service.extract(options);
-        return {items: data.map(item => this.model(item))};
+    async update (data:IModel, key :any, options? :IASMUpdateOptions) :Promise<IModel> {
+        let model = this._ioAdapter.model(key, data, options);
+        model = await this._service.save(model.key, model.properties, options);
+        return this._ioAdapter.data(model, options);
     }
 
-    create (key :IModelKey, properties :IModelProperties) :Promise<IModel> {
-
-        let model = new this._modelConstructor(key, properties);
-        return Promise.resolve(model);
-    }
-
-    async delete (key :IModelKey) :Promise<any> {
-        let data = await this._service.erase(key);
+    async delete (key :any, options? :IASMDeleteOptions) :Promise<any> {
+        let data = await this._service.erase(this._ioAdapter.key(key), options);
         return data;
-    }
-
-    async update (model :IModel) :Promise<IModel> {
-        let data = await this._service.save(model.key, model.properties);
-        return this.updateModel(model, data);
     }
 
 }
