@@ -1,6 +1,7 @@
 import {IModelConstructor, IModel, IModelKey} from "../model/interface";
 import {Model} from "../model";
 import {IIOAdapter, IFromModelOptions, IToModelOptions} from "./interface";
+import {INavigate} from "../navigate/interface";
 
 export * from "./interface";
 
@@ -38,6 +39,13 @@ export class IOAdapter implements IIOAdapter {
     listData(list: Array<IModel>, options?: IFromModelOptions) {
     }
 
+    nav (raw: any) :INavigate {
+        return undefined;
+    }
+
+    navData (raw: INavigate) :any {
+
+    }
 
 
     //

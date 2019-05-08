@@ -1,5 +1,5 @@
-import {IModel} from "./model";
-import {ILoadOptions, IStorage} from "./storage";
+import {IModel, IModelKey} from "./model";
+import {IExtractOptions, IExtractResult, ILoadOptions, IStorage} from "./storage";
 import {
     IASMListOptions,
     IServiceModel,
@@ -9,15 +9,14 @@ import {
     IASMDeleteOptions
 } from "./interface";
 
-import {IIOAdapter, IToModelOptions} from "./io-adapter";
+import {IFromModelOptions, IIOAdapter, IToModelOptions} from "./io-adapter";
 
 export class ServiceModel implements IServiceModel {
-    _service :IStorage;
+    _storage :IStorage;
     _ioAdapter :IIOAdapter;
-    _navigator: INavigator;
 
     constructor (storage :IStorage, ioAdapter :IIOAdapter) {
-        this._service = storage;
+        this._storage = storage;
         this._ioAdapter = ioAdapter;
     }
 
@@ -26,34 +25,52 @@ export class ServiceModel implements IServiceModel {
     }
 
     get storage () :IStorage {
-        return this._service;
+        return this._storage;
     }
 
-    async read (key :any, options? :IASMReadOptions) :Promise<any> {
-        let modelKey = this._ioAdapter.key(key, <IToModelOptions>options);
-        let model = await this._service.load(modelKey, <ILoadOptions>options);
+    /**
+     * Reads item data from storage by key (possible with options)
+     * @param key
+     * @param options
+     * @returns data loaded from storage by 'key'
+     *
+     * 'key' gets converted to IModelKey by ioAdapter and used for 'load' method of storage to get IModel, which then
+     * gets converted to data by ioAdapter
+     */
+    async read (key :any, options? :any) :Promise<any> {
+        //TODO adapter and storage options preparation
+        let modelKey :IModelKey = this._ioAdapter.key(key, options);
+        let model = await this._storage.load(modelKey, options);
         return this._ioAdapter.data(model, options);
     }
 
-    async list (options :IASMListOptions) :Promise<any> {
-        let list = await this._service.extract(options);
-        return this._ioAdapter.listData(list, options);
+    /**
+     * Reads items data from storage
+     * @param options
+     *
+     *
+     */
+    async list (options :any) :Promise<any> {
+        let listOptions = this._ioAdapter.listOptions(options);
+        let result :IExtractResult = await this._storage.extract(listOptions);
+        result.list = this._ioAdapter.listData(result.list, <IFromModelOptions>options);
+        return result;
     }
 
     async create (data: any, key? :any, options? :IASMCreateOptions) :Promise<any> {
         let model = this._ioAdapter.model(key, data, options);
-        model = await this._service.save(model.key, model.properties, options);
+        model = await this._storage.save(model.key, model.properties, options);
         return this._ioAdapter.data(model, options);
     }
 
     async update (data:IModel, key :any, options? :IASMUpdateOptions) :Promise<IModel> {
         let model = this._ioAdapter.model(key, data, options);
-        model = await this._service.save(model.key, model.properties, options);
+        model = await this._storage.save(model.key, model.properties, options);
         return this._ioAdapter.data(model, options);
     }
 
     async delete (key :any, options? :IASMDeleteOptions) :Promise<any> {
-        let data = await this._service.erase(this._ioAdapter.key(key), options);
+        let data = await this._storage.erase(this._ioAdapter.key(key), options);
         return data;
     }
 

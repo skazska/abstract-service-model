@@ -1,28 +1,6 @@
 import {IStorage} from "./storage";
 import {IIOAdapter} from "./io-adapter";
 
-export interface TASMOptionsRecursive {
-}
-
-export interface IASMOptions {
-    recursive? : TASMOptionsRecursive;
-}
-
-export interface IASMListOptions extends IASMOptions {
-}
-
-export interface IASMReadOptions extends IASMOptions {
-}
-
-export interface IASMCreateOptions extends IASMOptions {
-}
-
-export interface IASMUpdateOptions extends IASMOptions {
-}
-
-export interface IASMDeleteOptions extends IASMOptions {
-}
-
 export interface IServiceModel {
 
     /**
@@ -38,15 +16,15 @@ export interface IServiceModel {
     readonly ioAdapter :IIOAdapter;
 
 
-    read? (key :any, options?: IASMReadOptions) :Promise<any>;
+    read? (key :any, options?: any) :Promise<any>;
 
-    list? (params :any, options? :IASMListOptions) :Promise<any>;
+    list? (params :any, options? :any) :Promise<any>;
 
-    create? (data :any, key? :any, options? :IASMCreateOptions) :Promise<any>;
+    create? (data :any, key? :any, options? :any) :Promise<any>;
 
-    update? (data :any, key? :any, options? :IASMUpdateOptions) :Promise<any>;
+    update? (data :any, key? :any, options? :any) :Promise<any>;
 
-    delete? (key :any, options? :IASMDeleteOptions) :Promise<any>;
+    delete? (key :any, options? :any) :Promise<any>;
 }
 
 export interface IServiceModelConstructor {

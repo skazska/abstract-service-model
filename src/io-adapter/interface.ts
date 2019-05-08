@@ -1,10 +1,6 @@
 import {IModelConstructor, IModel, IModelKey, IModelProperties} from "../model";
+import {IListOptions} from "../options/list";
 
-export interface IToModelOptions {
-}
-
-export interface IFromModelOptions {
-}
 
 export interface IIOAdapter {
 
@@ -14,13 +10,20 @@ export interface IIOAdapter {
      */
     readonly modelConstructor :IModelConstructor;
 
-    key (raw: any, options? :IToModelOptions) :IModelKey;
+    /**
+     * Converts raw data to model key
+     * @param raw
+     * @param options
+     */
+    key (raw: any, options? :any) :IModelKey;
 
-    model (key: any, data: any, options? :IToModelOptions) :IModel;
+    model (key: any, data: any, options? :any) :IModel;
 
-    data (model :IModel, options? :IFromModelOptions): any;
+    data (model :IModel, options? :any): any;
 
-    listData (list :Array<IModel>, options? :IFromModelOptions)
+    listData (list :Array<IModel>, options?: IListDataOptions);
+
+    listOptions (options: any) :IListOptions;
 }
 
 export interface IIOAdapterConstructor {
