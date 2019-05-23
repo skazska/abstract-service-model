@@ -4,19 +4,16 @@ import {IError} from "./error";
 
 export interface IRunError extends IError {}
 
-export interface IRunParams {}
+export interface IExecutable {
+    run(params? :any, identity? :IIdentity);
+}
 
-export interface IRunData {}
+export abstract class Executable<I, O> implements IExecutable {
 
-export interface IRunResult extends Result<IRunData, IRunError> {}
+    protected abstract authenticate(identity :IIdentity) :Promise<Result<O, IRunError>>
+    protected abstract execute(params :I) :Promise<Result<O, IRunError>>
 
-export abstract class Executable {
-
-
-    protected abstract authenticate(identity :IIdentity) :Promise<Result<boolean, IRunError>>
-    protected abstract execute(params :IRunParams) :Promise<IRunResult>
-
-    async run(params :IRunParams, identity? :IIdentity) :Promise<IRunResult> {
+    async run(params :I, identity? :IIdentity) :Promise<Result<O, IRunError>> {
         if (identity) {
             const authResult = await this.authenticate(identity);
             if (authResult.isFailure) return authResult;

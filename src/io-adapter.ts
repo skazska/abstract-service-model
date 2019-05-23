@@ -1,4 +1,4 @@
-import {Executable, IRunData, IRunParams} from "./executable";
+import {IExecutable} from "./executable";
 import {Auth, IAuthToken, IAuthPassResult} from "./auth";
 import {Result} from "./result";
 import {IError} from "./error";
@@ -8,7 +8,7 @@ export interface IConvertError extends IError {}
 export abstract class IoAdapter<I, O> {
 
     constructor(
-        protected _executable :Executable,
+        protected _executable :IExecutable,
         protected _authenticator? :Auth
     ) {}
 
@@ -16,9 +16,9 @@ export abstract class IoAdapter<I, O> {
 
     protected abstract authTokens(input :I) :IAuthToken;
 
-    protected abstract data(inputs: I) :Result<IRunParams, IConvertError>;
+    protected abstract data(inputs: I) :Result<any, IConvertError>;
 
-    protected abstract success(result: IRunParams) :O;
+    protected abstract success(result: any) :O;
 
     async handler(inputs: I) :Promise<O> {
         let authPassResult :IAuthPassResult;
