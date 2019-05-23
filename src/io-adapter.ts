@@ -38,7 +38,7 @@ export abstract class IoAdapter<I, O> {
         if (dataResult.isFailure) return this.fail('validation', 'incorrect income', dataResult.errors);
 
         // execute
-        const runResult = this._executable.run(dataResult.get(), authPassResult && authPassResult.get());
+        const runResult = await this._executable.run(dataResult.get(), authPassResult && authPassResult.get());
 
         // handle error
         if (runResult.isFailure) return this.fail('execution', 'execution failed', runResult.errors);
