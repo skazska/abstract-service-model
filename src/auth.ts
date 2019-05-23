@@ -1,5 +1,7 @@
-export interface IAuthCredentials {
+import {Result} from "./result";
+import {IError} from "./error";
 
+export interface IAuthToken {
 }
 
 
@@ -9,12 +11,17 @@ export interface IAuthRealm {
 export interface IAuthAccess {
 }
 
-export interface IAuthPass extends IResult {
-    identity :any;
+export interface IAuthError extends IError {}
+
+export interface IIdentity {
     access(realm :IAuthRealm) :IAuthAccess;
 }
 
-export interface IAuth {
-    identify (credentials :IAuthCredentials) :IAuthPass;
+export interface IAuthPassResult extends Result<IIdentity, IAuthError> {
+
+}
+
+export abstract class Auth {
+    abstract identify (tokens :IAuthToken) :IAuthPassResult;
 
 }
