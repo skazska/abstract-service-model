@@ -7,7 +7,7 @@ export interface IAuthToken {
 export interface IAuthError extends IError {}
 
 export interface IIdentity {
-    access(realm :string, op: string) :boolean;
+    access(realm :string, op: string) :Promise<Result<boolean, IAuthError>>;
 }
 
 export interface IAuthPassResult extends Result<IIdentity, IAuthError> {}

@@ -7,7 +7,7 @@ export interface IConvertError extends IError {}
 
 export abstract class IoAdapter<I, O> {
 
-    constructor(
+    protected constructor(
         protected _executable :IExecutable,
         protected _authenticator? :Auth
     ) {}
