@@ -6,10 +6,10 @@ import {RecordExecutable} from "../record";
 export class ReadRecordExecutable extends RecordExecutable {
 
     protected async _execute(params :IModelKey) :Promise<Result<IModel, IRunError>> {
-        const record = await this._storage.read(params);
-        if (record.isFailure) {
-            return failure(record.errors.map(err => error(err.description, 'read from storage')));
+        const response = await this._storage.erase(params);
+        if (response.isFailure) {
+            return failure(response.errors.map(err => error(err.description, 'erase from storage')));
         }
-        return result(record.get());
+        return result(response.get());
     }
 }

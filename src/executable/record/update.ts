@@ -1,15 +1,21 @@
 import {IRunError, error} from "../../executable";
 import {failure, result, Result} from "../../result";
-import {IModel, IModelKey} from "../../model";
+import {IModel, IModelKey, IModelProperties} from "../../model";
 import {RecordExecutable} from "../record";
 
-export class ReadRecordExecutable extends RecordExecutable {
+export interface IUpdateRecordOptions {
+    key :IModelKey,
+    data :IModelProperties
+}
 
-    protected async _execute(params :IModelKey) :Promise<Result<IModel, IRunError>> {
-        const record = await this._storage.read(params);
-        if (record.isFailure) {
-            return failure(record.errors.map(err => error(err.description, 'read from storage')));
+export class UpdateRecordExecutable extends RecordExecutable {
+
+    protected async _execute(params :IUpdateRecordOptions) :Promise<Result<IModel, IRunError>> {
+        const record = this._storage.create(params.data, params.key);
+        const response = await this._storage.save(record);
+        if (response.isFailure) {
+            return failure(response.errors.map(err => error(err.description, 'save to storage')));
         }
-        return result(record.get());
+        return result(response.get());
     }
 }
