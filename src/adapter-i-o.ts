@@ -1,11 +1,11 @@
 import {IExecutable} from "./executable";
-import {Auth, IAuthToken, IAuthPassResult} from "./auth";
+import {Auth, IAuthToken, IIdentityResult} from "./auth";
 import {Result} from "./result";
 import {IError} from "./error";
 
 export interface IConvertError extends IError {}
 
-export abstract class IoAdapter<I, O> {
+export abstract class AdapterIO<I, O> {
 
     protected constructor(
         protected _executable :IExecutable,
@@ -21,7 +21,7 @@ export abstract class IoAdapter<I, O> {
     protected abstract success(result: any) :O;
 
     async handler(inputs: I) :Promise<O> {
-        let authPassResult :IAuthPassResult;
+        let authPassResult :IIdentityResult;
 
         if (this._authenticator) {
             // identify session (check tokens/credentials)

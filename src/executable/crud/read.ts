@@ -1,11 +1,11 @@
 import {IRunError, error} from "../../executable";
 import {failure, result, Result} from "../../result";
-import {IModel, IModelKey} from "../../model";
-import {RecordExecutable} from "../record";
+import {IModel} from "../../model";
+import {CRUDExecutable} from "../crud";
 
-export class ReadRecordExecutable extends RecordExecutable {
+export class ReadExecutable<K> extends CRUDExecutable<K, IModel, K, never> {
 
-    protected async _execute(key :IModelKey) :Promise<Result<IModel, IRunError>> {
+    protected async _execute(key :K) :Promise<Result<IModel, IRunError>> {
         const record = await this._storage.load(key);
         if (record.isFailure) {
             return failure(record.errors.map(err => error(err.description, 'read from storage')));

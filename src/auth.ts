@@ -6,13 +6,12 @@ export interface IAuthToken {
 
 export interface IAuthError extends IError {}
 
-export interface IIdentity {
+export interface IAuthIdentity {
     access(realm :string, op: string) :Promise<Result<boolean, IAuthError>>;
 }
 
-export interface IAuthPassResult extends Result<IIdentity, IAuthError> {}
+export interface IIdentityResult extends Result<IAuthIdentity, IAuthError> {}
 
 export abstract class Auth {
-    abstract identify (tokens :IAuthToken) :IAuthPassResult;
-
+    abstract identify (tokens :IAuthToken) :Promise<IIdentityResult>;
 }

@@ -1,5 +1,5 @@
 import {Result} from "./result";
-import {IAuthError, IIdentity} from "./auth";
+import {IAuthError, IAuthIdentity} from "./auth";
 import {IError} from "./error";
 
 export interface IRunError extends IError {
@@ -16,7 +16,7 @@ export const error = (description :string, operation? :string, field? :string) :
 };
 
 export interface IExecutable {
-    run(params? :any, identity? :IIdentity);
+    run(params? :any, identity? :IAuthIdentity) :Promise<Result<any, IRunError>>;
 }
 
 export interface IExecutableConfig {
@@ -35,11 +35,11 @@ export abstract class Executable<I, O> implements IExecutable {
 
     protected abstract _execute(params :I) :Promise<Result<O, IRunError>>
 
-    protected _authenticate(identity :IIdentity) :Promise<Result<any, IAuthError>> {
+    protected _authenticate(identity :IAuthIdentity) :Promise<Result<any, IAuthError>> {
         return identity.access(this._realm, this._operation);
     }
 
-    async run(params :I, identity? :IIdentity) :Promise<Result<O, IError>> {
+    async run(params :I, identity? :IAuthIdentity) :Promise<Result<O, IError>> {
         if (identity) {
             const authResult = await this._authenticate(identity);
             if (authResult.isFailure) return authResult;
