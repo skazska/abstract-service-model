@@ -9,7 +9,7 @@ import {
     IASMDeleteOptions
 } from "./interface";
 
-import {IFromModelOptions, IIOAdapter, IToModelOptions} from "./adapter-i-o";
+import {IFromModelOptions, IIOAdapter, IToModelOptions} from "./i-o";
 
 export class ServiceModel implements IServiceModel {
     _storage :IStorage;

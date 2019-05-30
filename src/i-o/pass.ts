@@ -1,4 +1,4 @@
-import {AdapterIO, IConvertError} from "../adapter-i-o";
+import {IO, IConvertError} from "../i-o";
 import {result, Result} from "../result";
 import {IModel} from "../model";
 import {IAuthPassToken} from "../auth/pass";
@@ -21,7 +21,7 @@ export interface IPassOutput {
     errors? :IError[]
 }
 
-export abstract class AdapterIOPass extends AdapterIO <IPassInput, IPassOutput> {
+export abstract class AdapterIOPass extends IO <IPassInput, IPassOutput> {
     protected fail(stage, message, errors) {
         return {
             message: '' + stage + ' ' + message,

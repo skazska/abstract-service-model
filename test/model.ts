@@ -1,15 +1,15 @@
-import {Model, IModelKey, IModelProperties} from "../src/model";
+import {Model} from "../src/model";
 
-export interface ITestModelKey extends IModelKey {
+export interface ITestModelKey {
     id :string
 }
 
-export interface ITestModelProperties extends IModelProperties {
+export interface ITestModelProperties {
     data? :string
     data1? :string
 }
 
-export class TestModel extends Model {
+export class TestModel extends Model<ITestModelKey, ITestModelProperties> {
     constructor(key :ITestModelKey, properties :ITestModelProperties) {
         super(key, properties);
     }

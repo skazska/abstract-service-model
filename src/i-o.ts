@@ -5,7 +5,7 @@ import {IError} from "./error";
 
 export interface IConvertError extends IError {}
 
-export abstract class AdapterIO<I, O> {
+export abstract class IO<I, O> {
 
     protected constructor(
         protected _executable :IExecutable,
