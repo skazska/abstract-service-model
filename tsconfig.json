@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2015",
-    "sourceMap": false,
-    "outDir": "dist"
+    "target": "es2017",
+    "inlineSourceMap": true,
+    "outDir": "./dist",
+    "experimentalDecorators": true
   },
   "include": [
     "src/**/*",
-    "src/*"
+    "src/*",
+    "src/**/*.d.ts",
+    "src/*.d.ts"
   ],
   "exclude": [
     "node_modules",

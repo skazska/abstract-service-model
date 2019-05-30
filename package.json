@@ -24,17 +24,17 @@
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.6",
+    "@types/node": "^11.13.8",
     "@types/sinon-chai": "^3.2.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "mocha": "^6.1.4",
+    "sinon": "^7.3.2",
     "sinon-chai": "^3.3.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.4"
   },
   "dependencies": {
-    "@skazska/tools-data-transform": "^0.0.4",
-    "json-pointer": "^0.6.0",
-    "jsonschema": "^1.2.4"
+    "@skazska/tools-data-transform": "^0.0.4"
   }
 }
