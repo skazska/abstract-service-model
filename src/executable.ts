@@ -3,6 +3,7 @@ import {IAuthError, IAuthIdentity} from "./auth";
 import {IError} from "./error";
 
 export interface IRunError extends IError {
+    field? :string,
     operation? :string
 }
 

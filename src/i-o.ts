@@ -3,7 +3,8 @@ import {Auth, IAuthToken, IIdentityResult} from "./auth";
 import {Result} from "./result";
 import {IError} from "./error";
 
-export interface IConvertError extends IError {}
+export interface IConvertError extends IError {
+}
 
 export abstract class IO<I, O> {
 
