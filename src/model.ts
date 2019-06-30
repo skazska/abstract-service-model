@@ -23,10 +23,12 @@ export interface IModel {
     update (properties :any) :IModel;
 }
 
-export interface IModelFactory<K,P> {
-    key (data :any) :K;
-    props (data :any) :P;
-    model (key :K, data :P) :IModel;
+export abstract class ModelFactory<K,P> {
+    abstract key (data :any) :K;
+    abstract props (data :any) :P;
+    model (data :any) :IModel {
+        return new Model(this.key(data), this.props(data));
+    };
 }
 
 import {object as objectTools} from "@skazska/tools-data-transform";

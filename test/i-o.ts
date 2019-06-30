@@ -1,18 +1,16 @@
-import {IO, IConvertError} from "../src/i-o";
-import {result, Result} from "../src/result";
+import {IO, IConvertError, IAuthTokenResult} from "../src/i-o";
+import {failure, result, Result} from "../src/result";
 import {IModel} from "../src/model";
 import {IAuthTokenTest} from "./auth";
 import {IError} from "../src/error";
 
+
 type TKey = string;
-type TData = {
-    val :string
-}
 
 export interface IInputTest {
     auth: string,
     key: TKey,
-    data: TData
+    data: any
 }
 
 export interface IOutputTest {
@@ -21,7 +19,7 @@ export interface IOutputTest {
     errors? :IError[]
 }
 
-export abstract class IOTest extends IO <IInputTest, IOutputTest> {
+export class IOTest extends IO <IInputTest, IOutputTest> {
     protected fail(stage, message, errors) {
         return {
             message: '' + stage + ' ' + message,
@@ -29,11 +27,11 @@ export abstract class IOTest extends IO <IInputTest, IOutputTest> {
         }
     };
 
-    protected authTokens(input :IInputTest) :IAuthTokenTest {
-        return {key: input.auth};
+    protected authTokens(input :IInputTest) :IAuthTokenResult {
+        return result({key: input.auth});
     };
 
-    protected data(inputs: IInputTest) :Result<TData, IConvertError> {
+    protected data(inputs: IInputTest) :Result<any, IConvertError> {
         return result(inputs.data);
     };
 

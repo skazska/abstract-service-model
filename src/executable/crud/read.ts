@@ -1,15 +1,21 @@
-import {IRunError, error} from "../../executable";
+import {IRunError, error, IExecutableConfig} from "../../executable";
 import {failure, result, Result} from "../../result";
 import {IModel} from "../../model";
 import {CRUDExecutable} from "../crud";
+import {ModelStorage} from "../../storage/model";
 
-export class ReadExecutable<K> extends CRUDExecutable<K, IModel, K, never> {
+export interface IReadExecutableConfig<K, P> extends IExecutableConfig {
+    storage :ModelStorage<K, P>
+}
+
+
+export class ReadCRUDExecutable<K, P> extends CRUDExecutable<K, IModel, K, P> {
 
     protected async _execute(key :K) :Promise<Result<IModel, IRunError>> {
-        const record = await this._storage.load(key);
-        if (record.isFailure) {
-            return failure(record.errors.map(err => error(err.description, 'read from storage')));
+        const dataResult = await this._storage.load(key);
+        if (dataResult.isFailure) {
+            return failure(dataResult.errors.map(err => error(err.description, 'read from storage')));
         }
-        return result(record.get());
+        return result(dataResult.get());
     }
 }

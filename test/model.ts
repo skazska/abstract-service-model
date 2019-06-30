@@ -1,4 +1,4 @@
-import {Model} from "../src/model";
+import {IModel, ModelFactory, Model} from "../src/model";
 
 export interface ITestModelKey {
     id :string
@@ -26,4 +26,16 @@ export class TestModel extends Model<ITestModelKey, ITestModelProperties> {
         super.properties = properties;
     }
 
+}
+
+export class TestModelFactory extends ModelFactory<ITestModelKey,ITestModelProperties> {
+    key (data :any) :ITestModelKey {
+        return {id: data.id};
+    };
+    props (data :any) :ITestModelProperties {
+        let result :ITestModelProperties = {};
+        if (data.data) result.data = data.data;
+        if (data.data1) result.data1 = data.data1;
+        return result;
+    };
 }
