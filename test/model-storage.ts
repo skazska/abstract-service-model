@@ -1,13 +1,12 @@
 import {IStorageError} from "../src/storage";
 import {failure, result, Result} from "../src/result";
-import {ITestModelKey, ITestModelProperties} from "./model";
+import {ITestModelKey, ITestModelProperties, TestModel} from "./model";
 import {error} from "../src/auth";
 import {IModelStorageConfig, ModelStorage} from "../src/storage/model";
-import {IModel} from "../src/model";
 
 // test model storage record format
 interface IRecord {
-    data :IModel,
+    data :TestModel,
     isRemoved?: boolean
 }
 
@@ -17,27 +16,31 @@ export interface ITestStorageConfig extends IModelStorageConfig<ITestModelKey, I
 
 // test model storage implementation
 export class TestStorage extends ModelStorage<ITestModelKey, ITestModelProperties> {
-    public data: Map<string, IRecord>;
+    public _data: Map<string, IRecord>;
 
     constructor (config :ITestStorageConfig) {
         super(config);
-        this.data = new Map(config.data);
+        this._data = new Map(config.data);
     }
 
-    load(key :ITestModelKey) :Promise<Result<IModel, IStorageError>> {
+    newKey(): Promise<Result<ITestModelKey, IStorageError>> {
+        return Promise.resolve(failure([error('use natural key')]));
+    }
+
+    load(key :ITestModelKey) :Promise<Result<TestModel, IStorageError>> {
         return new Promise((resolve) => {
             setTimeout(() => {
-                let data = this.data.get(key.id);
+                let data = this._data.get(key.id);
                 if (typeof data === 'undefined') return resolve(failure([error('not found')]));
                 if (data.isRemoved) return resolve(failure([error('record removed')]));
                 resolve(result(data.data))
             }, 10);
         });
     }
-    save(data :IModel) :Promise<Result<any, IStorageError>> {
+    save(data :TestModel) :Promise<Result<any, IStorageError>> {
         return new Promise((resolve) => {
             setTimeout(() => {
-                this.data.set(data.key.id, {data: data});
+                this._data.set(data.key.id, {data: data});
                 return resolve(result(data))
             }, 10);
         });
@@ -45,7 +48,7 @@ export class TestStorage extends ModelStorage<ITestModelKey, ITestModelPropertie
     erase(key :ITestModelKey) :Promise<Result<any, IStorageError>> {
         return new Promise((resolve) => {
             setTimeout(() => {
-                let data = this.data.get(key.id);
+                let data = this._data.get(key.id);
                 if (typeof data === 'undefined') return resolve(failure([error('not found')]));
                 if (data.isRemoved) return resolve(failure([error('record removed')]));
                 data.isRemoved = true;

@@ -2,12 +2,6 @@ import {IRunError, error, IExecutableConfig} from "../../executable";
 import {failure, result, Result} from "../../result";
 import {IModel} from "../../model";
 import {CRUDExecutable} from "../crud";
-import {ModelStorage} from "../../storage/model";
-
-export interface IReadExecutableConfig<K, P> extends IExecutableConfig {
-    storage :ModelStorage<K, P>
-}
-
 
 export class ReadCRUDExecutable<K, P> extends CRUDExecutable<K, IModel, K, P> {
 

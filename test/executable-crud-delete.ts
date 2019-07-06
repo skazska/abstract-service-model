@@ -3,13 +3,13 @@ import "mocha";
 import {expect, use}  from 'chai';
 import * as sinonChai from "sinon-chai";
 import {ITestModelKey, ITestModelProperties} from "./model";
-import {ReadCRUDExecutable} from "../src/executable/crud/read";
+import {DeleteCRUDExecutable} from "../src/executable/crud/delete";
 import {ICRUDExecutableConfig} from "../src/executable/crud";
 
 use(sinonChai);
 
 // test ReadCRUDExecutable implementation
-export class TestReadExecutable extends ReadCRUDExecutable<ITestModelKey, ITestModelProperties> {
+export class TestDeleteExecutable extends DeleteCRUDExecutable<ITestModelKey, ITestModelProperties> {
     constructor(props :ICRUDExecutableConfig<ITestModelKey, ITestModelProperties>) {
         super(props);
     }

@@ -8,14 +8,22 @@ export interface IUpdateOptions<K, P> {
     data :P
 }
 
-export class UpdateExecutable<K, P> extends CRUDExecutable<IUpdateOptions<K, P>, IModel, K, P> {
+export class UpdateCRUDExecutable<K, P> extends CRUDExecutable<IUpdateOptions<K, P>, IModel, K, P> {
 
     protected async _execute(params :IUpdateOptions<K, P>) :Promise<Result<IModel, IRunError>> {
-        const response = await this._storage.save(params.data, params.key);
+        // compose model
+        const dataResult = await this._storage.data(params.key, params.data);
+        if (dataResult.isFailure) {
+            return failure(dataResult.errors.map(
+                err => error(err.description, 'initiate new data model'))
+            );
+        }
+
+        // save
+        const response = await this._storage.save(dataResult.get());
         if (response.isFailure) {
             return failure(response.errors.map(err => error(err.description, 'save to storage')));
         }
-        const properties = response.get();
-        return result(this._modelFactory.model(params.key, properties));
+        return result(response.get());
     }
 }
