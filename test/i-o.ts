@@ -1,8 +1,9 @@
-import {IO, IConvertError, IAuthTokenResult} from "../src/i-o";
-import {failure, result, Result} from "../src/result";
+import {AbstractIO, IConvertError, IAuthTokenResult} from "../src/i-o";
+import {failure, result, GenericResult} from "../src/result";
 import {IModel} from "../src/model";
 import {IAuthTokenTest} from "./auth";
 import {IError} from "../src/error";
+import {AbstractAuth, IExecutable} from "../src";
 
 
 type TKey = string;
@@ -19,7 +20,12 @@ export interface IOutputTest {
     errors? :IError[]
 }
 
-export class IOTest extends IO <IInputTest, IOutputTest> {
+export class IOTest extends AbstractIO <IInputTest, IOutputTest> {
+    constructor(_executable, _authenticator?) {
+        super(_executable, _authenticator);
+    }
+
+
     protected fail(stage, message, errors) {
         return {
             message: '' + stage + ' ' + message,
@@ -31,7 +37,7 @@ export class IOTest extends IO <IInputTest, IOutputTest> {
         return result({key: input.auth});
     };
 
-    protected data(inputs: IInputTest) :Result<any, IConvertError> {
+    protected data(inputs: IInputTest) :GenericResult<any, IConvertError> {
         return result(inputs.data);
     };
 

@@ -1,24 +1,24 @@
 import {IExecutable} from "./executable";
-import {Auth, IAuthToken, IIdentityResult} from "./auth";
-import {Result} from "./result";
+import {AbstractAuth, IAuthToken, IIdentityResult} from "./auth";
+import {GenericResult} from "./result";
 import {IError} from "./error";
 
 export interface IConvertError extends IError {}
-export interface IAuthTokenResult extends Result<IAuthToken, IConvertError> {}
+export interface IAuthTokenResult extends GenericResult<IAuthToken, IConvertError> {}
 
 /**
  * provides convertations from external Input to executable (internal) Input and service data (like auth tokens)
  */
 
 /**
- * @property _executable ref to `Executable` implementation instance
- * @property [_authenticator] ref to `Auth` implementation instance
+ * @property _executable ref to `AbstractExecutable` implementation instance
+ * @property [_authenticator] ref to `AbstractAuth` implementation instance
  */
-export abstract class IO<I, O> {
+export abstract class AbstractIO<I, O> {
 
-    constructor(
+    protected constructor(
         protected _executable :IExecutable,
-        protected _authenticator? :Auth
+        protected _authenticator? :AbstractAuth
     ) {}
 
     /**
@@ -34,7 +34,7 @@ export abstract class IO<I, O> {
     /**
      * to extract data for executable from external Input
      */
-    protected abstract data(inputs: I) :Result<any, IConvertError>;
+    protected abstract data(inputs: I) :GenericResult<any, IConvertError>;
 
     /**
      * to perform actions on successful executable run

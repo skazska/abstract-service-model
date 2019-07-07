@@ -1,4 +1,4 @@
-import {Result} from "./result";
+import {GenericResult} from "./result";
 import {IError} from "./error";
 
 export interface IAuthToken {
@@ -10,10 +10,10 @@ export interface IAuthError extends IError {
 }
 
 export interface IAuthIdentity {
-    access(realm :string, op: string) :Promise<Result<boolean, IAuthError>>;
+    access(realm :string, op: string) :Promise<GenericResult<boolean, IAuthError>>;
 }
 
-export interface IIdentityResult extends Result<IAuthIdentity, IAuthError> {}
+export interface IIdentityResult extends GenericResult<IAuthIdentity, IAuthError> {}
 
 const error = (description :string, operation? :string, realm? :string) :IAuthError => {
     const err :IAuthError = {
@@ -24,7 +24,7 @@ const error = (description :string, operation? :string, realm? :string) :IAuthEr
     return err;
 };
 
-export abstract class Auth {
+export abstract class AbstractAuth {
     abstract identify (tokens :IAuthToken) :Promise<IIdentityResult>;
 
     static error = error;

@@ -1,21 +1,20 @@
-import AuthDef = require('./auth');
-export const auth = AuthDef;
+import Auth = require('./auth');
+export const auth = Auth;
 export * from './auth';
 
-import errorDef = require('./error');
-export const error = errorDef;
 export * from './error';
 
-import executableDef = require('./executable');
-export const executable = executableDef;
+import Executable = require('./executable');
+export const executable = Executable;
 export * from './executable';
 
-import ioDef = require('./i-o');
-export const io = ioDef;
+
+import IO = require('./i-o');
+export const io = IO;
 export * from './i-o';
 
-import modelDef = require('./model');
-export const model = modelDef;
+import Model = require('./model');
+export const model = Model;
 export * from './model';
 
 import resultDef = require('./result');

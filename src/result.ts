@@ -3,7 +3,7 @@ export interface IFail<E> {
     errors? :Array<E>
 }
 
-export class Result<T, E> implements IFail<E> {
+export class GenericResult<T, E> implements IFail<E> {
     constructor (
         protected _result? :T,
         protected _errors? :E[]
@@ -21,7 +21,7 @@ export class Result<T, E> implements IFail<E> {
         return this._result;
     }
 
-    error (err :E) :Result<T, E> {
+    error (err :E) :GenericResult<T, E> {
         if (!this._errors) {
             this._errors = [err];
         } else {
@@ -35,11 +35,11 @@ export class Result<T, E> implements IFail<E> {
     }
 }
 
-export const failure = <E>(list :E[]) :Result<null, E> => {
-    return new Result<null, E>(null, list);
+export const failure = <E>(list :E[]) :GenericResult<null, E> => {
+    return new GenericResult<null, E>(null, list);
 };
 
-export const result = <T>(data :T) :Result<T, never> => {
-    return new Result<T, never>(data);
+export const result = <T>(data :T) :GenericResult<T, never> => {
+    return new GenericResult<T, never>(data);
 };
 

@@ -1,3 +1,5 @@
+import {object as objectTools} from "@skazska/tools-data-transform";
+
 export interface IModel {
     /**
      * @property
@@ -23,22 +25,7 @@ export interface IModel {
     update (properties :any) :IModel;
 }
 
-export abstract class ModelFactory<K,P> {
-    abstract key (data :any) :K;
-    abstract props (data :any) :P;
-    dataModel (data :any) :Model<K,P> {
-        return new Model(this.key(data), this.props(data));
-    };
-    model (key: K, props: P) :Model<K,P> {
-        return new Model(key, props);
-    }
-}
-
-import {object as objectTools} from "@skazska/tools-data-transform";
-
-export class Model<K,P> implements IModel {
-    static keyNames: ReadonlyArray<string> = [];
-
+export class GenericModel<K,P> implements IModel {
     protected _key :K;
     protected _properties :P;
 
@@ -66,5 +53,24 @@ export class Model<K,P> implements IModel {
     update (properties :P) :IModel {
         objectTools.update(this._properties, properties);
         return this;
+    }
+}
+
+interface IModelConstructor<K,P> {
+    new(key :K, properties :P) :GenericModel<K,P>
+}
+
+export abstract class ModelFactory<K,P> {
+    protected modelConstructor :IModelConstructor<K,P>;
+    protected constructor(modelConstructor? :IModelConstructor<K,P>) {
+        this.modelConstructor = modelConstructor;
+    }
+    abstract key (data :any) :K;
+    abstract props (data :any) :P;
+    dataModel (data :any) :GenericModel<K,P> {
+        return new this.modelConstructor(this.key(data), this.props(data));
+    };
+    model (key: K, props: P) :GenericModel<K,P> {
+        return new this.modelConstructor(key, props);
     }
 }

@@ -2,8 +2,7 @@
 import "mocha";
 import {expect, use}  from 'chai';
 // import sinonChai = require("sinon-chai");
-import {TestModel} from "./model";
-import {TestModelFactory} from "./model";
+import {TestModel, TestModelFactory} from "./model";
 import {ITestStorageConfig, TestStorage} from "./model-storage";
 import {TestUpdateExecutable} from "./executable-crud-create";
 

@@ -1,4 +1,4 @@
-import {IModel, ModelFactory, Model} from "../src/model";
+import {IModel, ModelFactory, GenericModel} from "../src/model";
 
 export interface ITestModelKey {
     id :string
@@ -9,7 +9,7 @@ export interface ITestModelProperties {
     data1? :string
 }
 
-export class TestModel extends Model<ITestModelKey, ITestModelProperties> {
+export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties> {
     constructor(key :ITestModelKey, properties :ITestModelProperties) {
         super(key, properties);
     }
@@ -29,6 +29,10 @@ export class TestModel extends Model<ITestModelKey, ITestModelProperties> {
 }
 
 export class TestModelFactory extends ModelFactory<ITestModelKey,ITestModelProperties> {
+    constructor() {
+        super(TestModel);
+    }
+
     key (data :any) :ITestModelKey {
         return {id: data.id};
     };

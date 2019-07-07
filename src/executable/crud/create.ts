@@ -1,5 +1,5 @@
-import {IRunError, Executable} from "../../executable";
-import {failure, result, Result} from "../../result";
+import {IRunError, AbstractExecutable} from "../../executable";
+import {failure, result, GenericResult} from "../../result";
 import {IModel} from "../../model";
 import {CRUDExecutable} from "../crud";
 
@@ -10,7 +10,7 @@ export interface ICreateOptions<K, P> {
 
 export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICreateOptions<K, P>, IModel, K, P> {
 
-    protected async _execute(params :ICreateOptions<K, P>) :Promise<Result<IModel, IRunError>> {
+    protected async _execute(params :ICreateOptions<K, P>) :Promise<GenericResult<IModel, IRunError>> {
 
         // if key is not provided, try obtain new from storage
         if (typeof params.key ==='undefined') {
@@ -18,7 +18,7 @@ export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICreateOptions<K,
             if (key.isFailure) {
                 return failure(
                     key.errors.map(
-                        err => Executable.error(err.description, 'ask new key from storage')
+                        err => AbstractExecutable.error(err.description, 'ask new key from storage')
                     )
                 );
             }
@@ -29,7 +29,7 @@ export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICreateOptions<K,
         const dataResult = await this._storage.data(params.key, params.data);
         if (dataResult.isFailure) {
             return failure(dataResult.errors.map(
-                err => Executable.error(err.description, 'initiate new data model'))
+                err => AbstractExecutable.error(err.description, 'initiate new data model'))
             );
         }
 
@@ -37,7 +37,7 @@ export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICreateOptions<K,
         const response = await this._storage.save(dataResult.get());
         if (response.isFailure) {
             return failure(response.errors.map(
-                err => Executable.error(err.description, 'save to storage'))
+                err => AbstractExecutable.error(err.description, 'save to storage'))
             );
         }
         return result(response.get());
