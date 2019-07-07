@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "esModuleInterop": false
   }
 }

@@ -15,7 +15,7 @@ export interface IAuthIdentity {
 
 export interface IIdentityResult extends Result<IAuthIdentity, IAuthError> {}
 
-export const error = (description :string, operation? :string, realm? :string) :IAuthError => {
+const error = (description :string, operation? :string, realm? :string) :IAuthError => {
     const err :IAuthError = {
         description: description
     };
@@ -26,4 +26,6 @@ export const error = (description :string, operation? :string, realm? :string) :
 
 export abstract class Auth {
     abstract identify (tokens :IAuthToken) :Promise<IIdentityResult>;
+
+    static error = error;
 }

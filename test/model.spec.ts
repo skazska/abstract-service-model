@@ -1,9 +1,9 @@
 // const sinon = require('sinon');
 import "mocha";
 import {expect, use}  from 'chai';
-import * as sinonChai from "sinon-chai";
+// import sinonChai = require("sinon-chai");
 import {TestModel} from "./model";
-use(sinonChai);
+// use(sinonChai);
 
 describe('model', () => {
     describe('scenario1', () => {

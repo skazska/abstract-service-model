@@ -1,7 +1,9 @@
 import {Result} from "./result";
 import {IError} from "./error";
 
-export interface IStorageError extends IError {}
+export interface IStorageError extends IError {
+    source? :any
+}
 export interface IStorageConfig {}
 
 export interface IStorage<K, P, D> {

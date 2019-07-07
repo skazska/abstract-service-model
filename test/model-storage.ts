@@ -1,7 +1,6 @@
 import {IStorageError} from "../src/storage";
 import {failure, result, Result} from "../src/result";
 import {ITestModelKey, ITestModelProperties, TestModel} from "./model";
-import {error} from "../src/auth";
 import {IModelStorageConfig, ModelStorage} from "../src/storage/model";
 
 // test model storage record format
@@ -11,7 +10,7 @@ interface IRecord {
 }
 
 export interface ITestStorageConfig extends IModelStorageConfig<ITestModelKey, ITestModelProperties> {
-    data: Iterable<[string, IRecord]>
+    data: [string, IRecord][]
 }
 
 // test model storage implementation
@@ -24,15 +23,15 @@ export class TestStorage extends ModelStorage<ITestModelKey, ITestModelPropertie
     }
 
     newKey(): Promise<Result<ITestModelKey, IStorageError>> {
-        return Promise.resolve(failure([error('use natural key')]));
+        return Promise.resolve(failure([ModelStorage.error('use natural key')]));
     }
 
     load(key :ITestModelKey) :Promise<Result<TestModel, IStorageError>> {
         return new Promise((resolve) => {
             setTimeout(() => {
                 let data = this._data.get(key.id);
-                if (typeof data === 'undefined') return resolve(failure([error('not found')]));
-                if (data.isRemoved) return resolve(failure([error('record removed')]));
+                if (typeof data === 'undefined') return resolve(failure([ModelStorage.error('not found')]));
+                if (data.isRemoved) return resolve(failure([ModelStorage.error('record removed')]));
                 resolve(result(data.data))
             }, 10);
         });
@@ -49,8 +48,8 @@ export class TestStorage extends ModelStorage<ITestModelKey, ITestModelPropertie
         return new Promise((resolve) => {
             setTimeout(() => {
                 let data = this._data.get(key.id);
-                if (typeof data === 'undefined') return resolve(failure([error('not found')]));
-                if (data.isRemoved) return resolve(failure([error('record removed')]));
+                if (typeof data === 'undefined') return resolve(failure([ModelStorage.error('not found')]));
+                if (data.isRemoved) return resolve(failure([ModelStorage.error('record removed')]));
                 data.isRemoved = true;
                 return resolve(result(true));
             }, 10);

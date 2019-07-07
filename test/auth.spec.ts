@@ -1,8 +1,8 @@
 import "mocha";
 import {expect, use}  from 'chai';
-import * as sinonChai from "sinon-chai";
+// import sinonChai = require("sinon-chai");
 import {AuthTest} from "./auth";
-use(sinonChai);
+// use(sinonChai);
 
 describe('auth', () => {
     let instance :AuthTest = null;

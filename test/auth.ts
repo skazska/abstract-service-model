@@ -1,4 +1,4 @@
-import {Auth, IAuthError, IAuthIdentity, error, IIdentityResult} from "../src/auth";
+import {Auth, IAuthError, IAuthIdentity, IIdentityResult} from "../src/auth";
 import {failure, result, Result} from "../src/result";
 
 export interface IAuthTokenTest {
@@ -14,7 +14,7 @@ export class AuthIdentityTest implements IAuthIdentity {
 
 export class AuthTest extends Auth {
     identify (tokens :IAuthTokenTest) :Promise<IIdentityResult> {
-        if (!tokens.key) return Promise.resolve(failure([error('bad tokens')]));
+        if (!tokens.key) return Promise.resolve(failure([Auth.error('bad tokens')]));
         return Promise.resolve(result(new AuthIdentityTest()));
     }
 }

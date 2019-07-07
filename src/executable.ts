@@ -7,15 +7,6 @@ export interface IRunError extends IError {
     operation? :string
 }
 
-export const error = (description :string, operation? :string, field? :string) :IRunError => {
-    const err :IRunError = {
-        description: description
-    };
-    if (field) err.field = field;
-    if (operation) err.operation = operation;
-    return err;
-};
-
 export interface IExecutable {
     run(params? :any, identity? :IAuthIdentity) :Promise<Result<any, IRunError>>;
 }
@@ -24,6 +15,16 @@ export interface IExecutableConfig {
     realm? :string
     operation? :string;
 }
+
+
+const error = (description :string, operation? :string, field? :string) :IRunError => {
+    const err :IRunError = {
+        description: description
+    };
+    if (field) err.field = field;
+    if (operation) err.operation = operation;
+    return err;
+};
 
 export abstract class Executable<I, O> implements IExecutable {
     protected _realm :string;
@@ -47,6 +48,8 @@ export abstract class Executable<I, O> implements IExecutable {
         }
         return this._execute(params);
     }
+
+    static error = error
 }
 
 

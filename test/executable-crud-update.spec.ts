@@ -1,13 +1,13 @@
 // const sinon = require('sinon');
 import "mocha";
 import {expect, use}  from 'chai';
-import * as sinonChai from "sinon-chai";
+// import sinonChai = require("sinon-chai");
 import {TestModel} from "./model";
 import {TestModelFactory} from "./model";
 import {ITestStorageConfig, TestStorage} from "./model-storage";
 import {TestUpdateExecutable} from "./executable-crud-update";
 
-use(sinonChai);
+// use(sinonChai);
 
 const testStorageConfig :ITestStorageConfig = {
     data: [

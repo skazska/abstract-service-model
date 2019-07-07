@@ -1,11 +1,20 @@
 import {IStorage, IStorageConfig, IStorageError} from "../storage";
 import {Model, ModelFactory} from "../model";
 import {result, Result} from "../result";
+import {IAuthError} from "../auth";
 
 
 export interface IModelStorageConfig<K, P> extends IStorageConfig {
     modelFactory :ModelFactory<K, P>
 }
+
+const error = (description :string, source? :any) :IStorageError => {
+    const err :IStorageError = {
+        description: description
+    };
+    if (source) err.source = source;
+    return err;
+};
 
 export abstract class ModelStorage<K, P> implements IStorage<K, P, Model<K,P>> {
     _modelFactory : ModelFactory<K, P>;
@@ -23,4 +32,5 @@ export abstract class ModelStorage<K, P> implements IStorage<K, P, Model<K,P>> {
         return Promise.resolve(result(data));
     }
 
+    static error = error
 }

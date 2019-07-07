@@ -4,7 +4,9 @@
     "target": "es2017",
     "inlineSourceMap": true,
     "outDir": "./dist",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "declaration": true
   },
   "include": [
     "src/**/*",
