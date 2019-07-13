@@ -1,5 +1,5 @@
 import {IStorageError} from "../src/storage";
-import {failure, result, GenericResult} from "../src/result";
+import {failure, success, GenericResult} from "../src/result";
 import {ITestModelKey, ITestModelProperties, TestModel} from "./model";
 import {IModelStorageConfig, AbstractModelStorage} from "../src/storage/model";
 
@@ -32,7 +32,7 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
                 let data = this._data.get(key.id);
                 if (typeof data === 'undefined') return resolve(failure([AbstractModelStorage.error('not found')]));
                 if (data.isRemoved) return resolve(failure([AbstractModelStorage.error('record removed')]));
-                resolve(result(data.data))
+                resolve(success(data.data))
             }, 10);
         });
     }
@@ -40,7 +40,7 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
         return new Promise((resolve) => {
             setTimeout(() => {
                 this._data.set(data.key.id, {data: data});
-                return resolve(result(data))
+                return resolve(success(data))
             }, 10);
         });
     }
@@ -51,7 +51,7 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
                 if (typeof data === 'undefined') return resolve(failure([AbstractModelStorage.error('not found')]));
                 if (data.isRemoved) return resolve(failure([AbstractModelStorage.error('record removed')]));
                 data.isRemoved = true;
-                return resolve(result(true));
+                return resolve(success(true));
             }, 10);
         });
     }

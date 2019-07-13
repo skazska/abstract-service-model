@@ -1,5 +1,5 @@
 import {IRunError, AbstractExecutable} from "../../executable";
-import {failure, result, GenericResult} from "../../result";
+import {failure, success, GenericResult} from "../../result";
 import {IModel} from "../../model";
 import {CRUDExecutable} from "../crud";
 
@@ -10,6 +10,6 @@ export class ReadCRUDExecutable<K, P> extends CRUDExecutable<K, IModel, K, P> {
         if (dataResult.isFailure) {
             return failure(dataResult.errors.map(err => AbstractExecutable.error(err.description, 'read from storage')));
         }
-        return result(dataResult.get());
+        return success(dataResult.get());
     }
 }

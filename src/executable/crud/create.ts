@@ -1,5 +1,5 @@
 import {IRunError, AbstractExecutable} from "../../executable";
-import {failure, result, GenericResult} from "../../result";
+import {failure, success, GenericResult} from "../../result";
 import {IModel} from "../../model";
 import {CRUDExecutable} from "../crud";
 
@@ -40,6 +40,6 @@ export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICreateOptions<K,
                 err => AbstractExecutable.error(err.description, 'save to storage'))
             );
         }
-        return result(response.get());
+        return success(response.get());
     }
 }

@@ -1,5 +1,5 @@
 import {IRunError, AbstractExecutable} from "../../executable";
-import {failure, result, GenericResult} from "../../result";
+import {failure, success, GenericResult} from "../../result";
 import {IModel} from "../../model";
 import {CRUDExecutable} from "../crud";
 
@@ -24,6 +24,6 @@ export class UpdateCRUDExecutable<K, P> extends CRUDExecutable<IUpdateOptions<K,
         if (response.isFailure) {
             return failure(response.errors.map(err => AbstractExecutable.error(err.description, 'save to storage')));
         }
-        return result(response.get());
+        return success(response.get());
     }
 }

@@ -39,7 +39,7 @@ export const failure = <E>(list :E[]) :GenericResult<null, E> => {
     return new GenericResult<null, E>(null, list);
 };
 
-export const result = <T>(data :T) :GenericResult<T, never> => {
+export const success = <T>(data :T) :GenericResult<T, never> => {
     return new GenericResult<T, never>(data);
 };
 

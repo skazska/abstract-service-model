@@ -1,6 +1,6 @@
 import {IStorage, IStorageConfig, IStorageError} from "../storage";
 import {GenericModel, ModelFactory} from "../model";
-import {result, GenericResult} from "../result";
+import {success, GenericResult} from "../result";
 
 
 export interface IModelStorageConfig<K, P> extends IStorageConfig {
@@ -28,7 +28,7 @@ export abstract class AbstractModelStorage<K, P> implements IStorage<K, P, Gener
     abstract erase(key :K) :Promise<GenericResult<any, IStorageError>>
     data(key:K, props: P) :Promise<GenericResult<GenericModel<K,P>, IStorageError>> {
         const data = this._modelFactory.model(key, props);
-        return Promise.resolve(result(data));
+        return Promise.resolve(success(data));
     }
 
     static error = error

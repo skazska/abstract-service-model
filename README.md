@@ -9,7 +9,7 @@
     * `executable.run` with extracted data (abstract method `data` should implement data extraction 
         from Input data)
     * return Promise with `fail` method result if `identify` or `run` method return error, `success` 
-        method result otherwise
+        method success otherwise
  
 3. `executable.run` invokes:
     * `_authenticate` method if `identity` is provided for `run` where `identity` gets asked to check 

@@ -7,12 +7,7 @@ export interface IConvertError extends IError {}
 export interface IAuthTokenResult extends GenericResult<IAuthToken, IConvertError> {}
 
 /**
- * provides convertations from external Input to executable (internal) Input and service data (like auth tokens)
- */
-
-/**
- * @property _executable ref to `AbstractExecutable` implementation instance
- * @property [_authenticator] ref to `AbstractAuth` implementation instance
+ * @class provides convert and handle external Input and service data (like auth tokens) to run executable (internal)
  */
 export abstract class AbstractIO<I, O> {
 
@@ -24,7 +19,7 @@ export abstract class AbstractIO<I, O> {
     /**
      * to perform actions on errors
      */
-    protected abstract fail(stage, message, errors);
+    protected abstract fail(stage :string, message :string, errors :IConvertError[]);
 
     /**
      * to extract auth tokens from external Input

@@ -1,5 +1,5 @@
 import {IRunError, AbstractExecutable} from "../../executable";
-import {failure, result, GenericResult} from "../../result";
+import {failure, success, GenericResult} from "../../result";
 import {CRUDExecutable} from "../crud";
 
 export class DeleteCRUDExecutable<K, P> extends CRUDExecutable<K, boolean, K, P> {
@@ -9,6 +9,6 @@ export class DeleteCRUDExecutable<K, P> extends CRUDExecutable<K, boolean, K, P>
         if (response.isFailure) {
             return failure(response.errors.map(err => AbstractExecutable.error(err.description, 'erase from storage')));
         }
-        return result(response.get());
+        return success(response.get());
     }
 }
