@@ -1,4 +1,4 @@
-import {AbstractIO, IConvertError, IAuthTokenResult} from "../src/i-o";
+import {AbstractIO, IIOError, IAuthTokenResult} from "../src/i-o";
 import {failure, success, GenericResult} from "../src/result";
 import {IModel} from "../src/model";
 import {IAuthTokenTest} from "./auth";
@@ -26,18 +26,15 @@ export class IOTest extends AbstractIO <IInputTest, IOutputTest> {
     }
 
 
-    protected fail(stage, message, errors) {
-        return {
-            message: '' + stage + ' ' + message,
-            errors: errors
-        }
+    protected fail(options) :IOutputTest {
+        return options;
     };
 
     protected authTokens(input :IInputTest) :IAuthTokenResult {
         return success({key: input.auth});
     };
 
-    protected data(inputs: IInputTest) :GenericResult<any, IConvertError> {
+    protected data(inputs: IInputTest) :GenericResult<any, IIOError> {
         return success(inputs.data);
     };
 

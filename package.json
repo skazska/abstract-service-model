@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "abstract service model",
   "main": "dist/index.js",
-  "types" : "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "clear-dist": "rm -rf dist/*",
     "clear-docs": "rm -rf docs/*",
@@ -25,6 +25,7 @@
   "preferGlobal": true,
   "bin": "./dist/index.js",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.28",
     "@types/chai": "^4.1.7",
     "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.6",
@@ -32,7 +33,9 @@
     "@types/sinon-chai": "^3.2.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "install": "^0.13.0",
     "mocha": "^6.1.4",
+    "npm": "^6.10.1",
     "sinon": "^7.3.2",
     "sinon-chai": "^3.3.0",
     "ts-node": "^8.1.0",
