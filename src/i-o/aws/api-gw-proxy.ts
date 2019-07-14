@@ -1,11 +1,10 @@
 import {APIGatewayProxyResult} from "aws-lambda";
-import {AbstractIO, IIOError} from "../../i-o";
-import {AbstractExecutable} from "../../executable";
-import {AbstractAuth} from "../../auth";
-import {GenericResult, success} from "../../result";
+import {HandleResult} from "../../i-o";
 import {AwsApiGw} from "./api-gw";
-import {IAwsApiGwProxyInput} from "../../../dist/i-o/aws/api-gw-proxy";
+import {success} from "../../result";
+import {IError} from "../../error";
 
+// APIGatewayProxyResult
 // statusCode: number;
 // headers?: {
 //     [header: string]: boolean | number | string;
@@ -16,22 +15,33 @@ import {IAwsApiGwProxyInput} from "../../../dist/i-o/aws/api-gw-proxy";
 // body: string;
 // isBase64Encoded?: boolean;
 
+const STAGE_TO_STATUS = {
+    'auth': 403,
+    'validation': 400,
+    'execution': 500
+};
+
 export abstract class AwsApiGwProxy<EI, EO> extends AwsApiGw<EI, EO, APIGatewayProxyResult> {
-
-    protected constructor(
-        protected _executable :AbstractExecutable<EI, EO>,
-        protected _authenticator? :AbstractAuth
-    ) {
-        super(_executable, _authenticator)
-    }
-
-    protected fail(stage: string, message: string, errors: IIOError[]) :Error|string {
+    protected fail(stage: string, message: string, errors: IError[]) :HandleResult<APIGatewayProxyResult> {
+        return success({
+            statusCode: STAGE_TO_STATUS[stage],
+            body: JSON.stringify({
+                message: message,
+                errors: errors
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     };
-
-    protected abstract data(inputs: IAwsApiGwProxyInput) :GenericResult<EI, IIOError>;
 
     protected success(result: EO) :APIGatewayProxyResult {
+        return {
+            statusCode: 200,
+            body: JSON.stringify(result),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
     };
-
-
 }

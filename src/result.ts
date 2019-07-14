@@ -1,9 +1,4 @@
-export interface IFail<E> {
-    isFailure? :boolean,
-    errors? :Array<E>
-}
-
-export class GenericResult<T, E> implements IFail<E> {
+export class GenericResult<T, E> {
     constructor (
         protected _result? :T,
         protected _errors? :E[]

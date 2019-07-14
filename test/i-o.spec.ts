@@ -35,10 +35,12 @@ describe('io', () => {
         expect(instance).to.have.property('authTokens').which.is.a('function');
         expect(instance).to.have.property('data').which.is.a('function');
     });
-    it('#handler returns success from executable', async () => {
+    it('#handler returns handleResult with success from executable', async () => {
         let success = await instance.handler({auth: 'auth', key: 'id', data: {id: 'id'}});
-        expect(success).to.have.property('result');
-        let model = success.result;
+        expect(success).to.have.property('get');
+        let data = success.get();
+        expect(data).to.have.property('result');
+        let model = data.result;
         expect(model.data).to.eql({id: 'id', data: 'data'})
     });
 

@@ -1,25 +1,34 @@
-import {IExecutable} from "./executable";
+import {AbstractExecutable} from "./executable";
 import {AbstractAuth, IAuthToken, IIdentityResult} from "./auth";
-import {GenericResult} from "./result";
+import {GenericResult, success} from "./result";
 import {IError} from "./error";
 
-export interface IIOError extends IError {}
-export interface IAuthTokenResult extends GenericResult<IAuthToken, IIOError> {}
+export interface IAuthTokenResult extends GenericResult<IAuthToken, IError> {}
+
+export class HandleResult<O> extends GenericResult<O, IError> {
+    stage? :string;
+    message? :string;
+}
 
 /**
  * @class provides convert and handle external Input and service data (like auth tokens) to run executable (internal)
  */
-export abstract class AbstractIO<I, O> {
+export abstract class AbstractIO<I, EI, EO, O> {
 
     protected constructor(
-        protected _executable :IExecutable,
+        protected _executable :AbstractExecutable<EI, EO>,
         protected _authenticator? :AbstractAuth
     ) {}
 
     /**
      * to perform actions on errors
      */
-    protected abstract fail(stage :string, message :string, errors :IError[]) :any;
+    protected fail(stage :string, message :string, errors :IError[]) :HandleResult<O> {
+        const failure = new HandleResult(null, errors);
+        failure.message = message;
+        failure.stage = stage;
+        return failure;
+    };
 
     /**
      * to extract auth tokens from external Input
@@ -29,48 +38,42 @@ export abstract class AbstractIO<I, O> {
     /**
      * to extract data for executable from external Input
      */
-    protected abstract data(inputs: I) :GenericResult<any, IIOError>;
+    protected abstract data(inputs: I) :GenericResult<EI, IError>;
 
     /**
      * to perform actions on successful executable run
      * @param result
      */
-    protected abstract success(result: any) :O;
+    protected abstract success(result: EO) :O;
 
     /**
      * handler
      */
-    async handler(inputs: I) :Promise<O> {
+    async handler(inputs: I) :Promise<GenericResult<O,IError>> {
         let authPassResult :IIdentityResult;
         let authTokenResult :IAuthTokenResult;
 
         if (this._authenticator) {
             //extract tokens from inputs
             authTokenResult = this.authTokens(inputs);
-            if (authTokenResult.isFailure) return Promise.reject(
-                this.fail('auth', "can't extract tokens", authTokenResult.errors)
-            );
+            if (authTokenResult.isFailure)
+                return this.fail('auth', "can't extract tokens", authTokenResult.errors);
 
             // identify session (check tokens/credentials)
             authPassResult = await this._authenticator.identify(authTokenResult.get());
-            if (authPassResult.isFailure) return Promise.reject(
-                this.fail('auth', 'not identified', authPassResult.errors)
-            );
+            if (authPassResult.isFailure)
+                return this.fail('auth', 'not identified', authPassResult.errors);
         }
 
         // extract data from inputs
         const dataResult = await this.data(inputs);
-        if (dataResult.isFailure) return Promise.reject(
-            this.fail('validation', 'incorrect income', dataResult.errors)
-        );
+        if (dataResult.isFailure) return this.fail('validation', 'incorrect income', dataResult.errors);
 
         // execute
         const runResult = await this._executable.run(dataResult.get(), authPassResult && authPassResult.get());
-        if (runResult.isFailure) return Promise.reject(
-            this.fail('execution', 'execution failed', runResult.errors)
-        );
+        if (runResult.isFailure) return this.fail('execution', 'execution failed', runResult.errors);
 
         // handle results
-        return Promise.resolve(this.success(runResult.get()));
+        return success(this.success(runResult.get()));
     };
 }
