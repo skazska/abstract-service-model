@@ -43,6 +43,9 @@
     "typescript": "^3.4.4"
   },
   "dependencies": {
-    "@skazska/tools-data-transform": "^0.0.4"
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "@skazska/tools-data-transform": "^0.0.4",
+    "aws-sdk": "^2.493.0"
   }
 }
