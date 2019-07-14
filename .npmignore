@@ -1,11 +1,12 @@
 .idea
 .gitignore
 .travis.yml
-#.npmignore
+.npmignore
 #*.map
-#tsconfig.*
+tsconfig.*
 
-#src
+docs
+src
 test
 test-int
 field-test
