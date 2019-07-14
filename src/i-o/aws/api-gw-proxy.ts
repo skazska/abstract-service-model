@@ -1,6 +1,6 @@
 import {APIGatewayProxyResult} from "aws-lambda";
 import {HandleResult} from "../../i-o";
-import {AwsApiGw} from "./api-gw";
+import {AwsApiGwIO} from "./api-gw";
 import {success} from "../../result";
 import {IError} from "../../error";
 
@@ -21,7 +21,7 @@ const STAGE_TO_STATUS = {
     'execution': 500
 };
 
-export abstract class AwsApiGwProxy<EI, EO> extends AwsApiGw<EI, EO, APIGatewayProxyResult> {
+export abstract class AwsApiGwProxyIO<EI, EO> extends AwsApiGwIO<EI, EO, APIGatewayProxyResult> {
     protected fail(stage: string, message: string, errors: IError[]) :HandleResult<APIGatewayProxyResult> {
         return success({
             statusCode: STAGE_TO_STATUS[stage],

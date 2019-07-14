@@ -9,6 +9,6 @@ export interface IAwsApiGwInput {
     context :Context
 }
 
-export abstract class AwsApiGw<EI, EO, O> extends AbstractIO<IAwsApiGwInput, EI, EO, O> {
+export abstract class AwsApiGwIO<EI, EO, O> extends AbstractIO<IAwsApiGwInput, EI, EO, O> {
     protected abstract data(inputs: IAwsApiGwInput) :GenericResult<EI, IError>;
 }
