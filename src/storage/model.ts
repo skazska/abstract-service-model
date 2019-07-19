@@ -1,4 +1,4 @@
-import {IStorage, IStorageConfig, IStorageError} from "../storage";
+import {IStorage, IStorageConfig, IStorageError, IStorageOperationOptions} from "../storage";
 import {GenericModel, ModelFactory} from "../model";
 import {success, GenericResult} from "../result";
 
@@ -22,10 +22,10 @@ export abstract class AbstractModelStorage<K, P> implements IStorage<K, P, Gener
         this._modelFactory = props.modelFactory;
     }
 
-    abstract newKey?() :Promise<GenericResult<K, IStorageError>>
-    abstract load(key :K) :Promise<GenericResult<GenericModel<K,P>, IStorageError>>
-    abstract save(data :GenericModel<K,P>) :Promise<GenericResult<any, IStorageError>>
-    abstract erase(key :K) :Promise<GenericResult<any, IStorageError>>
+    abstract newKey?(options?: IStorageOperationOptions) :Promise<GenericResult<K, IStorageError>>
+    abstract load(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<GenericModel<K,P>, IStorageError>>
+    abstract save(data :GenericModel<K,P>, options?: IStorageOperationOptions) :Promise<GenericResult<any, IStorageError>>
+    abstract erase(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<any, IStorageError>>
     data(key:K, props: P) :Promise<GenericResult<GenericModel<K,P>, IStorageError>> {
         const data = this._modelFactory.model(key, props);
         return Promise.resolve(success(data));
