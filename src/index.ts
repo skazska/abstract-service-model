@@ -17,11 +17,6 @@ export * from './executable/crud/delete';
 // export const io = IO;
 export * from './i-o';
 
-// import IO = require('./i-o');
-// export const io = IO;
-export * from './i-o/aws/api-gw';
-export * from './i-o/aws/api-gw-proxy';
-
 
 // import Model = require('./model');
 // export const model = Model;
