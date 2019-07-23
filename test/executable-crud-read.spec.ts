@@ -29,9 +29,9 @@ describe('TestReadExecutable', () => {
             let runResult = await instance.run({id: 'id'});
             expect(runResult.isFailure).to.be.false;
             let model = runResult.get();
-            expect(model).to.have.property('key').which.is.eql({id: 'id'});
-            expect(model).to.have.property('properties').which.is.eql({data: 'data'});
-            expect(model).to.have.property('data').which.is.eql({id: 'id', data: 'data'});
+            expect(model.getKey()).eql({id: 'id'});
+            expect(model.getProperties()).eql({data: 'data'});
+            expect(model.getData()).eql({id: 'id', data: 'data'});
         });
     });
 });

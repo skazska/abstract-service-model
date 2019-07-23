@@ -1,4 +1,4 @@
-import {IModel, ModelFactory, GenericModel} from "../src/model";
+import {ModelFactory, GenericModel} from "../src/model";
 
 export interface ITestModelKey {
     id :string
@@ -14,17 +14,17 @@ export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties>
         super(key, properties);
     }
 
-    get key() :ITestModelKey {
-        return <ITestModelKey>super.key;
-    }
-
-    get properties() :ITestModelProperties {
-        return <ITestModelProperties>super.properties;
-    }
-
-    set properties(properties :ITestModelProperties) {
-        super.properties = properties;
-    }
+    // get key() :ITestModelKey {
+    //     return <ITestModelKey>super.getKey();
+    // }
+    //
+    // get properties() :ITestModelProperties {
+    //     return <ITestModelProperties>super.getProperties();
+    // }
+    //
+    // set properties(properties :ITestModelProperties) {
+    //     super.setProperties(properties);
+    // }
 
 }
 
@@ -33,10 +33,10 @@ export class TestModelFactory extends ModelFactory<ITestModelKey,ITestModelPrope
         super(TestModel);
     }
 
-    key (data :any) :ITestModelKey {
+    dataKey (data :any) :ITestModelKey {
         return {id: data.id};
     };
-    props (data :any) :ITestModelProperties {
+    dataProperties (data :any) :ITestModelProperties {
         let result :ITestModelProperties = {};
         if (data.data) result.data = data.data;
         if (data.data1) result.data1 = data.data1;

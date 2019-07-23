@@ -41,7 +41,7 @@ describe('io', () => {
         let data = success.get();
         expect(data).to.have.property('result');
         let model = data.result;
-        expect(model.data).to.eql({id: 'id', data: 'data'})
+        expect(model.getData()).to.eql({id: 'id', data: 'data'})
     });
 
 });

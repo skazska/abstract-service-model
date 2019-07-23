@@ -39,7 +39,7 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
     save(data :TestModel) :Promise<GenericResult<any, IStorageError>> {
         return new Promise((resolve) => {
             setTimeout(() => {
-                this._data.set(data.key.id, {data: data});
+                this._data.set(data.getKey().id, {data: data});
                 return resolve(success(data))
             }, 10);
         });

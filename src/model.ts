@@ -2,52 +2,76 @@ import {object as objectTools} from "@skazska/tools-data-transform";
 
 export interface IModel {
     /**
-     * @property
-     * holds key fields
+     * returns key fields
      */
-
-    readonly key :any;
-    /**
-     * @property
-     * holds data fields
-     */
-    properties :any;
+    getKey () :any;
 
     /**
-     * @property
-     * provides combined keys and data fields record
+     * returns data fields
      */
-    readonly data :any;
+    getProperties () :any;
+
+    /**
+     * sets data fields
+     */
+    setProperties (properties :any) :any;
+
+    /**
+     * returns schema
+     */
+    getSchema () :any;
+
+    /**
+     * sets schema
+     */
+    setSchema (schema :any) :any;
+
+    /**
+     * returns combined keys and data fields record
+     */
+    getData () :any;
 
     /**
      * updates data fields
      */
-    update (properties :any) :IModel;
+    update (properties :any) :any;
 }
 
 export class GenericModel<K,P> implements IModel {
     protected _key :K;
     protected _properties :P;
+    protected _schema? :any;
 
-    constructor (key :K, properties :P) {
-        this.properties = properties;
+    constructor (key :K, properties :P, schema? :any) {
+        this.setProperties(properties);
         this._key = typeof key === 'object' ? {... key} : key;
+        this.setSchema(schema);
     }
 
-    set properties (properties :P) {
+    getSchema() :any {
+        return this._schema;
+    }
+
+    setSchema(schema :any) :GenericModel<K,P> {
+        this._schema = schema;
+        return this;
+    }
+
+    setProperties (properties :P) :GenericModel<K,P> {
         this._properties = properties;
+        return this;
     }
 
-    get properties () :P {
+    getProperties () :P {
         return this._properties;
     }
 
-    get key () :K {
+    getKey () :K {
         return {... this._key};
     }
 
-    get data () :K & P {
-        return {... this.properties, ... this.key}
+    getData () :K & P {
+        return {... this.getProperties(), ... this.getKey()}
     }
 
     update (properties :P) :IModel {
@@ -56,19 +80,19 @@ export class GenericModel<K,P> implements IModel {
     }
 }
 
-interface IModelConstructor<K,P> {
+export interface IModelConstructor<K,P> {
     new(key :K, properties :P) :GenericModel<K,P>
 }
 
 export abstract class ModelFactory<K,P> {
-    protected modelConstructor :IModelConstructor<K,P>;
-    protected constructor(modelConstructor? :IModelConstructor<K,P>) {
-        this.modelConstructor = modelConstructor;
-    }
-    abstract key (data :any) :K;
-    abstract props (data :any) :P;
+    constructor(
+        protected modelConstructor :IModelConstructor<K,P>
+    ) { }
+
+    abstract dataKey (data :any) :K;
+    abstract dataProperties (data :any) :P;
     dataModel (data :any) :GenericModel<K,P> {
-        return new this.modelConstructor(this.key(data), this.props(data));
+        return new this.modelConstructor(this.dataKey(data), this.dataProperties(data));
     };
     model (key: K, props: P) :GenericModel<K,P> {
         return new this.modelConstructor(key, props);
