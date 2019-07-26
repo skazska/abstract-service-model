@@ -1,4 +1,4 @@
-import {ModelFactory, GenericModel} from "../src/model";
+import {ModelFactory, GenericModel, IGenericModelOptions} from "../src/model";
 
 export interface ITestModelKey {
     id :string
@@ -14,18 +14,9 @@ export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties>
         super(key, properties);
     }
 
-    // get key() :ITestModelKey {
-    //     return <ITestModelKey>super.getKey();
-    // }
-    //
-    // get properties() :ITestModelProperties {
-    //     return <ITestModelProperties>super.getProperties();
-    // }
-    //
-    // set properties(properties :ITestModelProperties) {
-    //     super.setProperties(properties);
-    // }
+    setOptions(options: IGenericModelOptions<ITestModelKey, ITestModelProperties>) {
 
+    }
 }
 
 export class TestModelFactory extends ModelFactory<ITestModelKey,ITestModelProperties> {

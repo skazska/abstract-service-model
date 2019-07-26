@@ -17,16 +17,6 @@ export interface IModel {
     setProperties (properties :any) :any;
 
     /**
-     * returns schema
-     */
-    getSchema () :any;
-
-    /**
-     * sets schema
-     */
-    setSchema (schema :any) :any;
-
-    /**
      * returns combined keys and data fields record
      */
     getData () :any;
@@ -37,28 +27,27 @@ export interface IModel {
     update (properties :any) :any;
 }
 
-export class GenericModel<K,P> implements IModel {
+export interface IGenericModelOptions<K,P> {
+}
+
+export abstract class GenericModel<K,P> implements IModel {
     protected _key :K;
     protected _properties :P;
-    protected _schema? :any;
 
-    constructor (key :K, properties :P, schema? :any) {
+    protected constructor(key :K, properties :P, options? :IGenericModelOptions<K,P>) {
+        this.setOptions(options);
+        this.setKey(key);
         this.setProperties(properties);
+    }
+
+    abstract setOptions(options: IGenericModelOptions<K,P>)
+
+    getKey () :K {
+        return {... this._key};
+    }
+
+    setKey (key :K) :GenericModel<K,P> {
         this._key = typeof key === 'object' ? {... key} : key;
-        this.setSchema(schema);
-    }
-
-    getSchema() :any {
-        return this._schema;
-    }
-
-    setSchema(schema :any) :GenericModel<K,P> {
-        this._schema = schema;
-        return this;
-    }
-
-    setProperties (properties :P) :GenericModel<K,P> {
-        this._properties = properties;
         return this;
     }
 
@@ -66,8 +55,9 @@ export class GenericModel<K,P> implements IModel {
         return this._properties;
     }
 
-    getKey () :K {
-        return {... this._key};
+    setProperties (properties :P) :GenericModel<K,P> {
+        this._properties = properties;
+        return this;
     }
 
     getData () :K & P {
