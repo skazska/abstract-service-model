@@ -40,7 +40,7 @@ export abstract class GenericModel<K,P> implements IModel {
         this.setProperties(properties);
     }
 
-    abstract setOptions(options: IGenericModelOptions<K,P>)
+    protected abstract setOptions(options: IGenericModelOptions<K,P>)
 
     getKey () :K {
         return {... this._key};
