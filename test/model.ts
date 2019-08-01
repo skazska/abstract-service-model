@@ -1,4 +1,4 @@
-import {ModelFactory, GenericModel, IGenericModelOptions} from "../src/model";
+import {GenericModelFactory, GenericModel, IGenericModelOptions, IModelDataAdepter} from "../src/model";
 
 export interface ITestModelKey {
     id :string
@@ -19,18 +19,20 @@ export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties>
     }
 }
 
-export class TestModelFactory extends ModelFactory<ITestModelKey,ITestModelProperties> {
-    constructor() {
-        super(TestModel);
-    }
-
-    dataKey (data :any) :ITestModelKey {
+class TestModelDataAdapter implements IModelDataAdepter<ITestModelKey,ITestModelProperties> {
+    getKey (data :any) :ITestModelKey {
         return {id: data.id};
     };
-    dataProperties (data :any) :ITestModelProperties {
+    getProperties (data :any) :ITestModelProperties {
         let result :ITestModelProperties = {};
         if (data.data) result.data = data.data;
         if (data.data1) result.data1 = data.data1;
         return result;
     };
+}
+
+export class TestModelFactory extends GenericModelFactory<ITestModelKey,ITestModelProperties> {
+    constructor() {
+        super(TestModel, new TestModelDataAdapter());
+    }
 }

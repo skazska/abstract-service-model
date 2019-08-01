@@ -71,16 +71,26 @@ export abstract class GenericModel<K,P> implements IModel {
 }
 
 export interface IModelConstructor<K,P> {
-    new(key :K, properties :P) :GenericModel<K,P>
+    new(key :K, properties :P, options? :IGenericModelOptions<K,P>) :GenericModel<K,P>
 }
 
-export abstract class ModelFactory<K,P> {
+export interface IModelDataAdepter<K,P> {
+    getKey (data :any) :K;
+    getProperties (data :any) :P;
+}
+
+export abstract class GenericModelFactory<K,P> {
     constructor(
-        protected modelConstructor :IModelConstructor<K,P>
+        protected modelConstructor :IModelConstructor<K,P>,
+        protected dataAdapter :IModelDataAdepter<K, P>
     ) { }
 
-    abstract dataKey (data :any) :K;
-    abstract dataProperties (data :any) :P;
+    dataKey (data :any) :K {
+        return this.dataAdapter.getKey(data);
+    };
+    dataProperties (data :any) :P {
+        return this.dataAdapter.getProperties(data);
+    };
     dataModel (data :any) :GenericModel<K,P> {
         return new this.modelConstructor(this.dataKey(data), this.dataProperties(data));
     };

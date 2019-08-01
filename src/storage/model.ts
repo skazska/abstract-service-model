@@ -1,10 +1,10 @@
 import {IStorage, IStorageConfig, IStorageError, IStorageOperationOptions} from "../storage";
-import {GenericModel, ModelFactory} from "../model";
+import {GenericModel, GenericModelFactory} from "../model";
 import {success, GenericResult} from "../result";
 
 
 export interface IModelStorageConfig<K, P> extends IStorageConfig {
-    modelFactory :ModelFactory<K, P>
+    modelFactory :GenericModelFactory<K, P>
 }
 
 const error = (description :string, source? :any) :IStorageError => {
@@ -16,7 +16,7 @@ const error = (description :string, source? :any) :IStorageError => {
 };
 
 export abstract class AbstractModelStorage<K, P> implements IStorage<K, P, GenericModel<K,P>> {
-    _modelFactory : ModelFactory<K, P>;
+    _modelFactory : GenericModelFactory<K, P>;
 
     protected constructor(props :IModelStorageConfig<K, P>) {
         this._modelFactory = props.modelFactory;
