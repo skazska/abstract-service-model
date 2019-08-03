@@ -1,4 +1,12 @@
 import {object as objectTools} from "@skazska/tools-data-transform";
+import {IError} from "./error";
+import {GenericResult} from "./result";
+
+export interface IModelError extends IError {
+    field? :string
+}
+
+export class ModelValidationResult extends GenericResult<any, IModelError> {}
 
 export interface IModel {
     /**
@@ -14,7 +22,7 @@ export interface IModel {
     /**
      * sets data fields
      */
-    setProperties (properties :any) :any;
+    setProperties (properties :any) :IModel;
 
     /**
      * returns combined keys and data fields record
@@ -24,11 +32,10 @@ export interface IModel {
     /**
      * updates data fields
      */
-    update (properties :any) :any;
+    update (properties :any) :IModel;
 }
 
-export interface IGenericModelOptions<K,P> {
-}
+export interface IGenericModelOptions<K,P> {}
 
 export abstract class GenericModel<K,P> implements IModel {
     protected _key :K;
@@ -46,7 +53,7 @@ export abstract class GenericModel<K,P> implements IModel {
         return {... this._key};
     }
 
-    setKey (key :K) :GenericModel<K,P> {
+    protected setKey(key :K) :GenericModel<K,P> {
         this._key = typeof key === 'object' ? {... key} : key;
         return this;
     }

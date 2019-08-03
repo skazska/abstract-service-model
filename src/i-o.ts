@@ -49,7 +49,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
     /**
      * handler
      */
-    async handler(inputs: I) :Promise<GenericResult<O,IError>> {
+    public async handler(inputs: I) :Promise<GenericResult<O,IError>> {
         let authPassResult :IIdentityResult;
         let authTokenResult :IAuthTokenResult;
 

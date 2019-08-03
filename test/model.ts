@@ -1,4 +1,10 @@
-import {GenericModelFactory, GenericModel, IGenericModelOptions, IModelDataAdepter} from "../src/model";
+import {
+    GenericModelFactory,
+    GenericModel,
+    IGenericModelOptions,
+    IModelDataAdepter,
+    ModelValidationResult
+} from "../src/model";
 
 export interface ITestModelKey {
     id :string

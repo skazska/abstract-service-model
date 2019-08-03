@@ -25,8 +25,19 @@ export class GenericResult<T, E> {
         return this;
     }
 
-    success (data :T) {
+    success (data :T) :GenericResult<T, E> {
         this._result = data;
+        return this;
+    }
+
+    merge (...results :GenericResult<T, E>[]) :GenericResult<T, E> {
+        results.forEach(result => {
+            if (result.isFailure) {
+                this._errors = (this._errors || []).concat(result.errors);
+            }
+        });
+
+        return this;
     }
 }
 
