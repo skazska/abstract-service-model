@@ -1,6 +1,6 @@
 import {object as objectTools} from "@skazska/tools-data-transform";
 import {IError} from "./error";
-import {GenericResult} from "./result";
+import {GenericResult, mergeResults} from "./result";
 
 export interface IModelError extends IError {
     field? :string
@@ -15,6 +15,16 @@ export interface IModel {
     getKey () :any;
 
     /**
+     * sets key fields
+     */
+    setKey (key :any) :IModel;
+
+    /**
+     * checks if key are set
+     */
+    hasKey () :boolean;
+
+    /**
      * returns data fields
      */
     getProperties () :any;
@@ -23,11 +33,6 @@ export interface IModel {
      * sets data fields
      */
     setProperties (properties :any) :IModel;
-
-    /**
-     * returns combined keys and data fields record
-     */
-    getData () :any;
 
     /**
      * updates data fields
@@ -53,7 +58,12 @@ export abstract class GenericModel<K,P> implements IModel {
         return {... this._key};
     }
 
-    protected setKey(key :K) :GenericModel<K,P> {
+    hasKey () :boolean {
+        return !!this._key;
+    }
+
+    setKey(key :K) :GenericModel<K,P> {
+        if (this.hasKey()) throw new Error("Model key can't be modified");
         this._key = typeof key === 'object' ? {... key} : key;
         return this;
     }
@@ -67,10 +77,6 @@ export abstract class GenericModel<K,P> implements IModel {
         return this;
     }
 
-    getData () :K & P {
-        return {... this.getProperties(), ... this.getKey()}
-    }
-
     update (properties :P) :IModel {
         objectTools.update(this._properties, properties);
         return this;
@@ -82,8 +88,9 @@ export interface IModelConstructor<K,P> {
 }
 
 export interface IModelDataAdepter<K,P> {
-    getKey (data :any) :K;
-    getProperties (data :any) :P;
+    getKey (data :any) :GenericResult<K, IModelError>;
+    getProperties (data :any) :GenericResult<P, IModelError>;
+    getData (key :K, properties: P) :GenericResult<any, IModelError>;
 }
 
 export abstract class GenericModelFactory<K,P> {
@@ -92,16 +99,22 @@ export abstract class GenericModelFactory<K,P> {
         protected dataAdapter :IModelDataAdepter<K, P>
     ) { }
 
-    dataKey (data :any) :K {
+    dataKey (data :any) :GenericResult<K, IModelError> {
         return this.dataAdapter.getKey(data);
     };
-    dataProperties (data :any) :P {
+    dataProperties (data :any) :GenericResult<P, IModelError> {
         return this.dataAdapter.getProperties(data);
     };
-    dataModel (data :any) :GenericModel<K,P> {
-        return new this.modelConstructor(this.dataKey(data), this.dataProperties(data));
+    dataModel (data :any) :GenericResult<GenericModel<K,P>, IModelError> {
+        const results = [this.dataKey(data), this.dataProperties(data)];
+        return <GenericResult<GenericModel<K,P>, IModelError>>mergeResults(results).wrap(
+            (results) => { return new this.modelConstructor(results[0], results[1])}
+        );
     };
     model (key: K, props: P) :GenericModel<K,P> {
         return new this.modelConstructor(key, props);
+    };
+    data (model :IModel) :any {
+        return this.dataAdapter.getData(model.getKey(), model.getProperties())
     }
 }

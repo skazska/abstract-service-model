@@ -3,8 +3,9 @@ import {
     GenericModel,
     IGenericModelOptions,
     IModelDataAdepter,
-    ModelValidationResult
+    ModelValidationResult, IModelError
 } from "../src/model";
+import {GenericResult, success} from "../src";
 
 export interface ITestModelKey {
     id :string
@@ -20,21 +21,45 @@ export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties>
         super(key, properties);
     }
 
-    setOptions(options: IGenericModelOptions<ITestModelKey, ITestModelProperties>) {
+    protected setOptions(options: IGenericModelOptions<ITestModelKey, ITestModelProperties>) {
 
     }
+
+    get id() {
+        return this._key.id;
+    }
+
+    get data() {
+        return this._properties.data;
+    }
+
+    get data1() {
+        return this._properties.data1;
+    }
+
+    set data(val :string) {
+        this._properties.data = val;
+    }
+
+    set data1(val :string) {
+        this._properties.data1 = val;
+    }
+
 }
 
 class TestModelDataAdapter implements IModelDataAdepter<ITestModelKey,ITestModelProperties> {
-    getKey (data :any) :ITestModelKey {
-        return {id: data.id};
+    getKey (data :any) :GenericResult<ITestModelKey, IModelError> {
+        return success({id: data.id});
     };
-    getProperties (data :any) :ITestModelProperties {
+    getProperties (data :any) :GenericResult<ITestModelProperties, IModelError> {
         let result :ITestModelProperties = {};
         if (data.data) result.data = data.data;
         if (data.data1) result.data1 = data.data1;
-        return result;
+        return success(result);
     };
+    getData(key: ITestModelKey, properties: ITestModelProperties): any {
+        return {...key, ...properties}
+    }
 }
 
 export class TestModelFactory extends GenericModelFactory<ITestModelKey,ITestModelProperties> {

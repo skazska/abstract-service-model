@@ -10,7 +10,6 @@ export interface IStorageOperationOptions {}
 
 export interface IStorage<K, P, D> {
     newKey?(options?: IStorageOperationOptions) :Promise<GenericResult<K, IStorageError>>
-    data(key:K, props: P) :Promise<GenericResult<D, IStorageError>>
     load(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<D, IStorageError>>
     save(data :D, options?: IStorageOperationOptions) :Promise<GenericResult<any, IStorageError>>
     erase(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<any, IStorageError>>

@@ -1,29 +1,21 @@
 import {IRunError, AbstractExecutable} from "../../executable";
-import {failure, success, GenericResult} from "../../result";
-import {IModel} from "../../model";
+import {GenericResult} from "../../result";
 import {CRUDExecutable} from "../crud";
+import {GenericModel} from "../../model";
+import {IStorageOperationOptions} from "../../storage";
 
 export interface IUpdateOptions<K, P> {
-    key :K,
-    data :P
+    model : GenericModel<K,P>,
+    options?: IStorageOperationOptions
 }
 
-export class UpdateCRUDExecutable<K, P> extends CRUDExecutable<IUpdateOptions<K, P>, IModel, K, P> {
+export class UpdateCRUDExecutable<K, P> extends CRUDExecutable<IUpdateOptions<K, P>, any, K, P> {
 
-    protected async _execute(params :IUpdateOptions<K, P>) :Promise<GenericResult<IModel, IRunError>> {
-        // compose model
-        const dataResult = await this._storage.data(params.key, params.data);
-        if (dataResult.isFailure) {
-            return failure(dataResult.errors.map(
-                err => AbstractExecutable.error(err.description, 'initiate new data model'))
-            );
-        }
-
+    protected async _execute(params :IUpdateOptions<K, P>) :Promise<GenericResult<any, IRunError>> {
         // save
-        const response = await this._storage.save(dataResult.get());
-        if (response.isFailure) {
-            return failure(response.errors.map(err => AbstractExecutable.error(err.description, 'save to storage')));
-        }
-        return success(response.get());
+        return (await this.storage.save(params.model, params.options)).wrap(
+            result => params.model,
+            error => AbstractExecutable.error(error.description, 'save to storage')
+        );
     }
 }

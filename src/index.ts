@@ -21,7 +21,7 @@ export * from './i-o';
 // import Model = require('./model');
 // export const model = Model;
 export * from './model';
-export * from './model/schema';
+// export * from './model/schema';
 
 // import resultDef = require('./result');
 // export const result = resultDef;

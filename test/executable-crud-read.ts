@@ -1,4 +1,4 @@
-import {ITestModelKey, ITestModelProperties} from "./model";
+import {ITestModelKey, ITestModelProperties, TestModel} from "./model";
 import {ReadCRUDExecutable} from "../src/executable/crud/read";
 import {ICRUDExecutableConfig} from "../src/executable/crud";
 

@@ -28,19 +28,22 @@ describe('TestUpdateExecutable', () => {
             });
         });
         it("#run should return successful Result with model, data should be updated in test storage", async () => {
-            let data = { data: {data1: 'data2'}, key: {id: 'id'}};
+            let data = {model: testStorageConfig.modelFactory.dataModel({ data1: 'data2', id: 'id'}).get()};
+
             let runResult = await instance.run(data);
             expect(runResult.isFailure).to.be.false;
             let model = runResult.get();
             expect(model.getKey()).eql({id: 'id'});
             expect(model.getProperties()).eql({data1: 'data2'});
-            expect(model.getData()).eql({id: 'id', data1: 'data2'});
+            expect(model.id).to.eql('id');
+            expect(model.data1).to.eql('data2');
             let insertedResult = await storage.load({id: 'id'});
             expect(insertedResult.isFailure).to.be.false;
             model = insertedResult.get();
             expect(model.getKey()).eql({id: 'id'});
             expect(model.getProperties()).eql({data1: 'data2'});
-            expect(model.getData()).eql({id: 'id', data1: 'data2'});
+            expect(model.id).to.eql('id');
+            expect(model.data1).to.eql('data2');
         });
     });
 });

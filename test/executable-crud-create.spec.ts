@@ -27,19 +27,22 @@ describe('TestCreateExecutable', () => {
             });
         });
         it("#run should return successful Result with model, data should be entered in test storage", async () => {
-            let data = { data: {data: 'data'}, key: {id: 'id'}};
+            let data = {model: testStorageConfig.modelFactory.dataModel({ data: 'data', id: 'id'}).get()};
             let runResult = await instance.run(data);
             expect(runResult.isFailure).to.be.false;
-            let model = runResult.get();
+            let model :TestModel = runResult.get();
             expect(model.getKey()).eql({id: 'id'});
             expect(model.getProperties()).to.eql({data: 'data'});
-            expect(model.getData()).eql({id: 'id', data: 'data'});
+            expect(model.id).eql('id');
+            expect(model.data).eql('data');
+
             let insertedResult = await storage.load({id: 'id'});
             expect(insertedResult.isFailure).to.be.false;
             model = insertedResult.get();
             expect(model.getKey()).eql({id: 'id'});
             expect(model.getProperties()).eql({data: 'data'});
-            expect(model.getData()).eql({id: 'id', data: 'data'});
+            expect(model.id).eql('id');
+            expect(model.data).eql('data');
         });
     });
 });

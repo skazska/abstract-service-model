@@ -6,10 +6,10 @@ export interface ICRUDExecutableConfig<K, P> extends IExecutableConfig {
 }
 
 export abstract class CRUDExecutable<I, O, K, P> extends AbstractExecutable<I, O> {
-    protected _storage :AbstractModelStorage<K, P>;
+    protected storage :AbstractModelStorage<K, P>;
 
     protected constructor(props :ICRUDExecutableConfig<K, P>) {
         super(props);
-        this._storage = props.storage;
+        this.storage = props.storage;
     }
 }

@@ -4,11 +4,11 @@ export class GenericResult<T, E> {
         protected _errors? :E[]
     ) {}
 
-    get errors () {
+    get errors () :E[] {
         return this._errors;
     }
 
-    get isFailure () {
+    get isFailure () :boolean {
         return !!this._errors
     }
 
@@ -30,7 +30,7 @@ export class GenericResult<T, E> {
         return this;
     }
 
-    merge (...results :GenericResult<T, E>[]) :GenericResult<T, E> {
+    mergeErrors (...results :GenericResult<any, E>[]) :GenericResult<T, E> {
         results.forEach(result => {
             if (result.isFailure) {
                 this._errors = (this._errors || []).concat(result.errors);
@@ -38,6 +38,16 @@ export class GenericResult<T, E> {
         });
 
         return this;
+    }
+
+    wrap <T1, E1>(continuation :(data :T) => T1, errorConverter? :(error :E)=>E1) :GenericResult<T1, E1> {
+        if (this.isFailure)
+            return failure(errorConverter ? this.errors.map(errorConverter) : <E1[]><any>this.errors);
+        try {
+            return success(continuation(this.get()));
+        } catch (e) {
+            return failure([e]);
+        }
     }
 }
 
@@ -49,3 +59,13 @@ export const success = <T>(data :T) :GenericResult<T, never> => {
     return new GenericResult<T, never>(data);
 };
 
+export const mergeResults = (results :GenericResult<any,any>[]) :GenericResult<any[],any> => {
+    return results.reduce((merged, result) => {
+        if (result.isFailure) {
+            merged.mergeErrors(result);
+        } else {
+            merged.success(merged.get().concat(result.get()))
+        }
+        return merged;
+    }, new GenericResult<any[], any>([]));
+};

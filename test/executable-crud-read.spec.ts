@@ -6,6 +6,7 @@ import {TestModel} from "./model";
 import {TestModelFactory} from "./model";
 import {ITestStorageConfig, TestStorage} from "./model-storage";
 import {TestReadExecutable} from "./executable-crud-read";
+import {GenericResult, IModelError} from "../src";
 
 // use(sinonChai);
 
@@ -31,7 +32,8 @@ describe('TestReadExecutable', () => {
             let model = runResult.get();
             expect(model.getKey()).eql({id: 'id'});
             expect(model.getProperties()).eql({data: 'data'});
-            expect(model.getData()).eql({id: 'id', data: 'data'});
+            expect(model.id).to.eql('id');
+            expect(model.data).to.eql('data');
         });
     });
 });
