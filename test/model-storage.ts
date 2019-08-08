@@ -1,4 +1,4 @@
-import {IStorageError} from "../src/storage";
+import {IStorageError, IStorageOperationOptions} from "../src/storage";
 import {failure, success, GenericResult} from "../src/result";
 import {ITestModelKey, ITestModelProperties, TestModel} from "./model";
 import {IModelStorageConfig, AbstractModelStorage} from "../src/storage/model";
@@ -22,7 +22,7 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
         this._data = new Map(config.data);
     }
 
-    newKey(): Promise<GenericResult<ITestModelKey, IStorageError>> {
+    newKey(options?: IStorageOperationOptions): Promise<GenericResult<ITestModelKey, IStorageError>> {
         return Promise.resolve(failure([AbstractModelStorage.error('use natural key')]));
     }
 

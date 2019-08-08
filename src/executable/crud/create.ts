@@ -1,6 +1,6 @@
 import {IRunError, AbstractExecutable} from "../../executable";
-import {failure,  GenericResult} from "../../result";
-import {GenericModel, IModel} from "../../model";
+import {GenericResult} from "../../result";
+import {GenericModel} from "../../model";
 import {CRUDExecutable} from "../crud";
 import {IStorageOperationOptions} from "../../storage";
 

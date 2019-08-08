@@ -1,12 +1,13 @@
 import {AbstractExecutable, IExecutableConfig} from "../executable";
-import {AbstractModelStorage} from "../storage/model";
+import {IStorage} from "../storage";
+import {GenericModel} from "../model";
 
 export interface ICRUDExecutableConfig<K, P> extends IExecutableConfig {
-    storage :AbstractModelStorage<K, P>
+    storage :IStorage<K, P, GenericModel<K, P>>
 }
 
 export abstract class CRUDExecutable<I, O, K, P> extends AbstractExecutable<I, O> {
-    protected storage :AbstractModelStorage<K, P>;
+    protected storage :IStorage<K, P, GenericModel<K, P>>;
 
     protected constructor(props :ICRUDExecutableConfig<K, P>) {
         super(props);

@@ -30,7 +30,7 @@ describe('TestDeleteExecutable', () => {
         it('#run should return true Result, data should be removed from test storage', async () => {
             let runResult = await instance.run({id: 'id'});
             expect(runResult.isFailure).to.be.false;
-            expect(runResult.get()).to.be.true;
+            expect(runResult.get()).to.be.null;
 
             let deletedResult = await storage.load({id: 'id'});
             expect(deletedResult.isFailure).to.be.true;

@@ -10,14 +10,17 @@ export class HandleResult<O> extends GenericResult<O, IError> {
     message? :string;
 }
 
+export interface IIOOptions {}
+
 /**
  * @class provides convert and handle external Input and service data (like auth tokens) to run executable (internal)
  */
 export abstract class AbstractIO<I, EI, EO, O> {
 
     protected constructor(
-        protected _executable :AbstractExecutable<EI, EO>,
-        protected _authenticator? :AbstractAuth
+        protected executable :AbstractExecutable<EI, EO>,
+        protected authenticator? :AbstractAuth,
+        protected options?: IIOOptions
     ) {}
 
     /**
@@ -53,14 +56,14 @@ export abstract class AbstractIO<I, EI, EO, O> {
         let authPassResult :IIdentityResult;
         let authTokenResult :IAuthTokenResult;
 
-        if (this._authenticator) {
+        if (this.authenticator) {
             //extract tokens from inputs
             authTokenResult = this.authTokens(inputs);
             if (authTokenResult.isFailure)
                 return this.fail('auth', "can't extract tokens", authTokenResult.errors);
 
             // identify session (check tokens/credentials)
-            authPassResult = await this._authenticator.identify(authTokenResult.get());
+            authPassResult = await this.authenticator.identify(authTokenResult.get());
             if (authPassResult.isFailure)
                 return this.fail('auth', 'not identified', authPassResult.errors);
         }
@@ -70,7 +73,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
         if (dataResult.isFailure) return this.fail('validation', 'incorrect income', dataResult.errors);
 
         // execute
-        const runResult = await this._executable.run(dataResult.get(), authPassResult && authPassResult.get());
+        const runResult = await this.executable.run(dataResult.get(), authPassResult && authPassResult.get());
         if (runResult.isFailure) return this.fail('execution', 'execution failed', runResult.errors);
 
         // handle results
