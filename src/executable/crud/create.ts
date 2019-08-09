@@ -1,17 +1,10 @@
 import {IRunError, AbstractExecutable} from "../../executable";
 import {GenericResult} from "../../result";
-import {GenericModel} from "../../model";
-import {CRUDExecutable} from "../crud";
-import {IStorageOperationOptions} from "../../storage";
+import {CRUDExecutable, ICUExecuteOptions} from "../crud";
 
-export interface ICreateOptions<K, P> {
-    model : GenericModel<K,P>,
-    options?: IStorageOperationOptions
-}
+export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICUExecuteOptions<K, P>, any, K, P> {
 
-export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICreateOptions<K, P>, any, K, P> {
-
-    protected async _execute(params :ICreateOptions<K, P>) :Promise<GenericResult<any, IRunError>> {
+    protected async _execute(params :ICUExecuteOptions<K, P>) :Promise<GenericResult<any, IRunError>> {
 
         // if key is not provided, try obtain new from storage
         if (!params.model.hasKey()) {
