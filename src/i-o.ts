@@ -1,5 +1,5 @@
 import {AbstractExecutable} from "./executable";
-import {AbstractAuth, IAuthToken, IIdentityResult} from "./auth";
+import {IAuth, IAuthToken, IIdentityResult} from "./auth";
 import {GenericResult, success} from "./result";
 import {IError} from "./error";
 
@@ -19,7 +19,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
 
     protected constructor(
         protected executable :AbstractExecutable<EI, EO>,
-        protected authenticator? :AbstractAuth,
+        protected authenticator? :IAuth,
         protected options?: IIOOptions
     ) {}
 
