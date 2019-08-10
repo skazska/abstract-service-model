@@ -1,6 +1,6 @@
 {
   "name": "@skazska/abstract-service-model",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "abstract service model",
   "main": "index.js",
   "types": "index.d.ts",
