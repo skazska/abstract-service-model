@@ -10,7 +10,7 @@ export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICUExecuteOptions
         if (!params.model.hasKey()) {
             let key = (await this.storage.newKey()).wrap(
                 key => key,
-                err => AbstractExecutable.error(err.description, 'ask new key from storage')
+                err => AbstractExecutable.error(err.message, 'ask new key from storage')
             );
             params.model.setKey(key.get());
         }
@@ -18,7 +18,7 @@ export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICUExecuteOptions
         // save
         return (await this.storage.save(params.model, params.options)).wrap(
             result => params.model,
-            error => AbstractExecutable.error(error.description, 'save to storage')
+            error => AbstractExecutable.error(error.message, 'save to storage')
 
         );
     }

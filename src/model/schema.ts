@@ -1,9 +1,9 @@
 // import {GenericModel, IGenericModelOptions, IModel, IModelError, ModelValidationResult} from "../model";
 // import {failure, success} from "../result";
 //
-// const error = (description :string, field? :string) :IModelError => {
+// const error = (message :string, field? :string) :IModelError => {
 //     const err :IModelError = {
-//         description: description
+//         message: message
 //     };
 //     if (field) err.field = field;
 //     return err;

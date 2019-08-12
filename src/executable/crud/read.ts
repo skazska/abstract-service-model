@@ -7,7 +7,7 @@ export class ReadCRUDExecutable<K, P> extends CRUDExecutable<K, any, K, P> {
     protected async _execute(key :K) :Promise<GenericResult<any, IRunError>> {
         return (await this.storage.load(key)).wrap(
             (model) => model,
-            (error) => AbstractExecutable.error(error.description, 'read from storage')
+            (error) => AbstractExecutable.error(error.message, 'read from storage')
         );
     }
 }

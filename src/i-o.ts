@@ -1,4 +1,4 @@
-import {AbstractExecutable} from "./executable";
+import {AbstractExecutable, IRunError} from "./executable";
 import {IAuth, IAuthToken, IIdentityResult} from "./auth";
 import {GenericResult, success} from "./result";
 import {IError} from "./error";
@@ -55,28 +55,46 @@ export abstract class AbstractIO<I, EI, EO, O> {
     public async handler(inputs: I) :Promise<GenericResult<O,IError>> {
         let authPassResult :IIdentityResult;
         let authTokenResult :IAuthTokenResult;
+        let dataResult :GenericResult<EI, IError>;
+        let runResult :GenericResult<EO, IRunError>;
 
         if (this.authenticator) {
-            //extract tokens from inputs
-            authTokenResult = this.authTokens(inputs);
-            if (authTokenResult.isFailure)
-                return this.fail('auth', "can't extract tokens", authTokenResult.errors);
+            try {
+                //extract tokens from inputs
+                authTokenResult = this.authTokens(inputs);
+                if (authTokenResult.isFailure)
+                    return this.fail('auth', "can't extract tokens", authTokenResult.errors);
 
-            // identify session (check tokens/credentials)
-            authPassResult = await this.authenticator.identify(authTokenResult.get());
-            if (authPassResult.isFailure)
-                return this.fail('auth', 'not identified', authPassResult.errors);
+                // identify session (check tokens/credentials)
+                authPassResult = await this.authenticator.identify(authTokenResult.get());
+                if (authPassResult.isFailure)
+                    return this.fail('auth', 'not identified', authPassResult.errors);
+            } catch (e) {
+                return this.fail('auth', 'unexpected', [e]);
+            }
         }
 
         // extract data from inputs
-        const dataResult = await this.data(inputs);
-        if (dataResult.isFailure) return this.fail('validation', 'incorrect income', dataResult.errors);
+        try {
+            dataResult = await this.data(inputs);
+            if (dataResult.isFailure) return this.fail('extract', 'incorrect income', dataResult.errors);
+        } catch (e) {
+            return this.fail('extract', 'unexpected', [e]);
+        }
 
         // execute
-        const runResult = await this.executable.run(dataResult.get(), authPassResult && authPassResult.get());
-        if (runResult.isFailure) return this.fail('execution', 'execution failed', runResult.errors);
+        try {
+            runResult = await this.executable.run(dataResult.get(), authPassResult && authPassResult.get());
+            if (runResult.isFailure) return this.fail('execution', 'execution failed', runResult.errors);
+        } catch (e) {
+            return this.fail('execution', 'unexpected', [e]);
+        }
 
         // handle results
-        return success(this.success(runResult.get()));
+        try {
+            return success(this.success(runResult.get()));
+        } catch (e) {
+            return this.fail('encode', 'unexpected', [e]);
+        }
     };
 }

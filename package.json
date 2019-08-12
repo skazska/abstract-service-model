@@ -30,6 +30,7 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^11.13.19",
     "@types/sinon-chai": "^3.2.3",
+    "@types/stack-trace": "0.0.29",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "install": "^0.13.0",
@@ -42,6 +43,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@skazska/tools-data-transform": "^0.0.4"
+    "@skazska/tools-data-transform": "^0.0.4",
+    "stack-trace": "0.0.10"
   }
 }

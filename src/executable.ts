@@ -1,6 +1,6 @@
 import {GenericResult} from "./result";
 import {IAuthError, IAuthIdentity} from "./auth";
-import {IError} from "./error";
+import {IError, error} from "./error";
 
 export interface IRunError extends IError {
     field? :string,
@@ -17,10 +17,8 @@ export interface IExecutableConfig {
 }
 
 
-const error = (description :string, operation? :string, field? :string) :IRunError => {
-    const err :IRunError = {
-        description: description
-    };
+export const executionError = (message :string, operation? :string, field? :string) :IRunError => {
+    const err :IRunError = error(message);
     if (field) err.field = field;
     if (operation) err.operation = operation;
     return err;
@@ -49,7 +47,7 @@ export abstract class AbstractExecutable<I, O> implements IExecutable {
         return this._execute(params);
     }
 
-    static error = error
+    static error = executionError
 }
 
 

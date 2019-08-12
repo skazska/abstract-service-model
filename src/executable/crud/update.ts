@@ -8,7 +8,7 @@ export class UpdateCRUDExecutable<K, P> extends CRUDExecutable<ICUExecuteOptions
         // save
         return (await this.storage.save(params.model, params.options)).wrap(
             result => params.model,
-            error => AbstractExecutable.error(error.description, 'save to storage')
+            error => AbstractExecutable.error(error.message, 'save to storage')
         );
     }
 }

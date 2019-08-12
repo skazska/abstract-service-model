@@ -1,9 +1,16 @@
 import {GenericResult} from "./result";
-import {IError} from "./error";
+import {error, IError} from "./error";
 
 export interface IStorageError extends IError {
     source? :any
 }
+
+export const storageError = (message :string, source? :string) => {
+    const err :IStorageError = error(message);
+    if (source) err.source = source;
+    return err;
+};
+
 export interface IStorageConfig {}
 
 export interface IStorageOperationOptions {}

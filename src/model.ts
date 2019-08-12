@@ -1,10 +1,16 @@
 import {object as objectTools} from "@skazska/tools-data-transform";
-import {IError} from "./error";
+import {IError, error} from "./error";
 import {GenericResult, mergeResults} from "./result";
 
 export interface IModelError extends IError {
     field? :string
 }
+
+export const modelError = (message :string, field? :string) => {
+    const err = error(message);
+    if (field) err.field = field;
+    return err;
+};
 
 export class ModelValidationResult extends GenericResult<any, IModelError> {}
 
@@ -81,6 +87,8 @@ export abstract class GenericModel<K,P> implements IModel {
         objectTools.update(this._properties, properties);
         return this;
     }
+
+    static error = modelError;
 }
 
 export interface IModelConstructor<K,P> {
@@ -117,4 +125,6 @@ export abstract class GenericModelFactory<K,P> {
     data (model :IModel) :any {
         return this.dataAdapter.getData(model.getKey(), model.getProperties())
     }
+
+    static error = modelError;
 }
