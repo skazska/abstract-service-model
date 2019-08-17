@@ -1,16 +1,18 @@
 import {AbstractExecutable, IRunError} from "./executable";
-import {IAuth, IAuthToken, IIdentityResult} from "./auth";
+import {IAuth} from "./auth";
 import {GenericResult, success} from "./result";
 import {IError} from "./error";
 
-export interface IAuthTokenResult extends GenericResult<IAuthToken, IError> {}
+export interface IAuthTokenResult extends GenericResult<string, IError> {}
 
 export class HandleResult<O> extends GenericResult<O, IError> {
     stage? :string;
     message? :string;
 }
 
-export interface IIOOptions {}
+export interface IIOOptions {
+    realm? :string
+}
 
 /**
  * @class provides convert and handle external Input and service data (like auth tokens) to run executable (internal)
@@ -20,7 +22,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
     protected constructor(
         protected executable :AbstractExecutable<EI, EO>,
         protected authenticator? :IAuth,
-        protected options?: IIOOptions
+        protected options: IIOOptions = {}
     ) {}
 
     /**
@@ -53,7 +55,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
      * handler
      */
     public async handler(inputs: I) :Promise<GenericResult<O,IError>> {
-        let authPassResult :IIdentityResult;
+        let authPassResult;
         let authTokenResult :IAuthTokenResult;
         let dataResult :GenericResult<EI, IError>;
         let runResult :GenericResult<EO, IRunError>;
@@ -66,7 +68,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
                     return this.fail('auth', "can't extract tokens", authTokenResult.errors);
 
                 // identify session (check tokens/credentials)
-                authPassResult = await this.authenticator.identify(authTokenResult.get());
+                authPassResult = await this.authenticator.identify(authTokenResult.get(), this.options.realm);
                 if (authPassResult.isFailure)
                     return this.fail('auth', 'not identified', authPassResult.errors);
             } catch (e) {

@@ -30,7 +30,7 @@ export class IOTest extends AbstractIO <IInputTest, ITestModelKey, IModel, IOutp
     };
 
     protected authTokens(input :IInputTest) :IAuthTokenResult {
-        return success({key: input.auth});
+        return success(input.auth);
     };
 
     protected data(inputs: IInputTest) :GenericResult<ITestModelKey, IError> {

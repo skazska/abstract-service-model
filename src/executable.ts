@@ -12,7 +12,6 @@ export interface IExecutable {
 }
 
 export interface IExecutableConfig {
-    realm? :string
     operation? :string;
 }
 
@@ -25,23 +24,21 @@ export const executionError = (message :string, operation? :string, field? :stri
 };
 
 export abstract class AbstractExecutable<I, O> implements IExecutable {
-    protected _realm :string;
     protected _operation :string;
 
     protected constructor(props :IExecutableConfig) {
-        this._realm = props.realm || '*';
         this._operation = props.operation || '*';
     }
 
     protected abstract _execute(params :I) :Promise<GenericResult<O, IRunError>>
 
-    protected _authenticate(identity :IAuthIdentity) :Promise<GenericResult<any, IAuthError>> {
-        return identity.access(this._realm, this._operation);
+    protected _authenticate(identity :IAuthIdentity) :GenericResult<any, IAuthError> {
+        return identity.access(this._operation);
     }
 
     async run(params :I, identity? :IAuthIdentity) :Promise<GenericResult<O, IError>> {
         if (identity) {
-            const authResult = await this._authenticate(identity);
+            const authResult = this._authenticate(identity);
             if (authResult.isFailure) return authResult;
         }
         return this._execute(params);

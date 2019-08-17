@@ -6,6 +6,7 @@ import {AuthTest} from "./auth";
 import {TestReadExecutable} from "./executable-crud-read";
 import {ITestStorageConfig, TestStorage} from "./model-storage";
 import {TestModel, TestModelFactory} from "./model";
+import {RegExIdentity} from "../src";
 
 // use(sinonChai);
 
@@ -21,8 +22,10 @@ describe('io', () => {
     let instance :IOTest = null;
     let authenticator :AuthTest = null;
     let executable :TestReadExecutable = null;
-    beforeEach(() => {
-        authenticator = new AuthTest();
+    let token :string;
+    beforeEach(async () => {
+        authenticator = new AuthTest(RegExIdentity.getInstance);
+        token = (await authenticator.grant({test: 'read'}, 'testUser')).get();
         executable = new TestReadExecutable({
             storage :new TestStorage(testStorageConfig)
         });
@@ -36,7 +39,7 @@ describe('io', () => {
         expect(instance).to.have.property('data').which.is.a('function');
     });
     it('#handler returns handleResult with success from executable', async () => {
-        let success = await instance.handler({auth: 'auth', key: 'id', data: {id: 'id'}});
+        let success = await instance.handler({auth: token, key: 'id', data: {id: 'id'}});
         expect(success).to.have.property('get');
         let data = success.get();
         expect(data).to.have.property('result');

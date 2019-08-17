@@ -43,7 +43,11 @@ export class GenericResult<T, E> {
     wrap <T1, E1>(continuation :(data :T) => T1, errorConverter? :(error :E)=>E1) :GenericResult<T1, E1> {
         if (this.isFailure)
             return failure(errorConverter ? this.errors.map(errorConverter) : <E1[]><any>this.errors);
-        return success(continuation(this.get()));
+        try {
+            return success(continuation(this.get()));
+        } catch (e) {
+            failure(errorConverter ? [errorConverter(e)] : [e]);
+        }
     }
 }
 
