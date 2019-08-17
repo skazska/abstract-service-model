@@ -5,13 +5,9 @@ export class AuthTest extends AbstractAuth {
     _data: IAuthData;
     _realms: string[];
 
-    constructor (identityConstructor) {
-        super(identityConstructor);
+    constructor (identityConstructor, options?) {
+        super(identityConstructor, options);
     }
-
-    protected secret() :Promise<GenericResult<any, IAuthError>> {
-        return Promise.resolve(success('secret'));
-    };
 
     protected verify(secret: any, token :string, realm? :string) :Promise<GenericResult<IAuthData, IAuthError>> {
         let result :GenericResult<IAuthData, IAuthError>;

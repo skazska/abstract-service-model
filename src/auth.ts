@@ -71,10 +71,19 @@ export class RegExIdentity extends AuthIdentity {
     }
 }
 
-export abstract class AbstractAuth implements IAuth {
-    protected constructor(protected identityConstructor :(subject :string, details :IAccessDetails, realm? :string) => IAuthIdentity) {}
+export interface IAuthOptions {
+    secretSource?: any
+}
 
-    protected abstract secret() :Promise<GenericResult<any, IAuthError>>;
+export abstract class AbstractAuth implements IAuth {
+    protected constructor(
+        protected identityConstructor :(subject :string, details :IAccessDetails, realm? :string) => IAuthIdentity,
+        protected options :IAuthOptions = {}
+    ) {}
+
+    protected secret() :Promise<GenericResult<any, IAuthError>> {
+        return Promise.resolve(success(this.options.secretSource));
+    };
 
     protected abstract verify(secret: any, token :string, realm? :string) :Promise<GenericResult<IAuthData, IAuthError>>;
 

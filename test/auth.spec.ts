@@ -10,7 +10,7 @@ describe('auth', () => {
     let token :string;
     let identity :IAuthIdentity;
     before(() => {
-        instance = new AuthTest(RegExIdentity.getInstance);
+        instance = new AuthTest(RegExIdentity.getInstance, {secretSource: 'secret'});
     });
 
     it('constructor produce instance with expected properties and methods', () => {
