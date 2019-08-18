@@ -77,7 +77,7 @@ export abstract class GenericModel<K,P> implements IModel {
 
     setKey(key :K) :GenericModel<K,P> {
         if (this.hasKey()) throw new Error("Model key can't be modified");
-        this._key = typeof key === 'object' ? {... key} : key;
+        this._key = (key !== null && typeof key === 'object') ? {... key} : key;
         return this;
     }
 

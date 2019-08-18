@@ -3,9 +3,9 @@ import {
     GenericModel,
     IModelOptions,
     IModelDataAdepter,
-    ModelValidationResult, IModelError
+    ModelValidationResult, IModelError, modelError
 } from "../src/model";
-import {GenericResult, success} from "../src";
+import {failure, GenericResult, success} from "../src";
 
 export interface ITestModelKey {
     id :string
@@ -50,7 +50,7 @@ export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties>
 
 class TestModelDataAdapter implements IModelDataAdepter<ITestModelKey,ITestModelProperties> {
     getKey (data :any) :GenericResult<ITestModelKey, IModelError> {
-        return success({id: data.id});
+        return data.id ? success({id: data.id}) : failure([modelError('No key provided')]);
     };
     getProperties (data :any) :GenericResult<ITestModelProperties, IModelError> {
         let result :ITestModelProperties = {};

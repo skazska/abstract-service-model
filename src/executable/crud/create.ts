@@ -12,6 +12,7 @@ export class CreateCRUDExecutable<K, P> extends CRUDExecutable<ICUExecuteOptions
                 key => key,
                 err => AbstractExecutable.error(err.message, 'ask new key from storage')
             );
+            if (key.isFailure) return key;
             params.model.setKey(key.get());
         }
 
