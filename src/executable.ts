@@ -35,15 +35,16 @@ export abstract class AbstractExecutable<I, O> implements IExecutable {
 
     protected abstract _execute(params :I) :Promise<GenericResult<O, IRunError>>
 
-    protected _authenticate(identity :IAuthIdentity) :GenericResult<any, IAuthError> {
+    protected _authenticate(identity :IAuthIdentity, params :I) :GenericResult<any, IAuthError> {
         return identity.access(this.accessObject, this.operation);
     }
 
     async run(params :I, identity? :IAuthIdentity) :Promise<GenericResult<O, IError>> {
         if (identity) {
-            const authResult = this._authenticate(identity);
+            const authResult = this._authenticate(identity, params);
             if (authResult.isFailure) return authResult;
         }
+
         return this._execute(params);
     }
 
