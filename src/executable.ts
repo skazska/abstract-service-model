@@ -12,6 +12,7 @@ export interface IExecutable {
 }
 
 export interface IExecutableConfig {
+    accessObject?: string;
     operation? :string;
 }
 
@@ -24,16 +25,18 @@ export const executionError = (message :string, operation? :string, field? :stri
 };
 
 export abstract class AbstractExecutable<I, O> implements IExecutable {
-    protected _operation :string;
+    protected accessObject :string;
+    protected operation :string;
 
     protected constructor(props :IExecutableConfig) {
-        this._operation = props.operation || '*';
+        this.accessObject = props.accessObject;
+        this.operation = props.operation;
     }
 
     protected abstract _execute(params :I) :Promise<GenericResult<O, IRunError>>
 
     protected _authenticate(identity :IAuthIdentity) :GenericResult<any, IAuthError> {
-        return identity.access(this._operation);
+        return identity.access(this.accessObject, this.operation);
     }
 
     async run(params :I, identity? :IAuthIdentity) :Promise<GenericResult<O, IError>> {
