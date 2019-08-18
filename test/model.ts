@@ -1,7 +1,7 @@
 import {
     GenericModelFactory,
     GenericModel,
-    IGenericModelOptions,
+    IModelOptions,
     IModelDataAdepter,
     ModelValidationResult, IModelError
 } from "../src/model";
@@ -16,13 +16,14 @@ export interface ITestModelProperties {
     data1? :string
 }
 
+export interface ITestModelOptions extends IModelOptions{
+    option1: string
+}
+
 export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties> {
-    constructor(key :ITestModelKey, properties :ITestModelProperties) {
+
+    constructor(key :ITestModelKey, properties :ITestModelProperties, options? :ITestModelOptions) {
         super(key, properties);
-    }
-
-    protected setOptions(options: IGenericModelOptions<ITestModelKey, ITestModelProperties>) {
-
     }
 
     get id() {

@@ -9,7 +9,7 @@ describe('model', () => {
     describe('scenario1', () => {
         let model :TestModel = null;
         beforeEach(() => {
-            model = new TestModel({id: 'id'}, {data: 'data'});
+            model = new TestModel({id: 'id'}, {data: 'data'}, {option1: 'hi'});
         });
         it('#getKey (read only, immutable)', () => {
             expect(model).to.have.property('getKey').which.is.a('function');

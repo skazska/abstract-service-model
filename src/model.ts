@@ -46,19 +46,26 @@ export interface IModel {
     update (properties :any) :IModel;
 }
 
-export interface IGenericModelOptions<K,P> {}
+export interface IModelOptions {}
 
 export abstract class GenericModel<K,P> implements IModel {
     protected _key :K;
     protected _properties :P;
+    protected _options :any;
 
-    protected constructor(key :K, properties :P, options? :IGenericModelOptions<K,P>) {
+    protected constructor(key :K, properties :P, options? :IModelOptions) {
         this.setOptions(options);
         this.setKey(key);
         this.setProperties(properties);
     }
 
-    protected abstract setOptions(options: IGenericModelOptions<K,P>)
+    protected setOptions(options: IModelOptions) {
+        this._options = {...options};
+    }
+
+    protected getOptions() {
+        return this._options;
+    }
 
     getKey () :K {
         return {... this._key};
@@ -92,7 +99,7 @@ export abstract class GenericModel<K,P> implements IModel {
 }
 
 export interface IModelConstructor<K,P> {
-    new(key :K, properties :P, options? :IGenericModelOptions<K,P>) :GenericModel<K,P>
+    new(key :K, properties :P, options? :IModelOptions) :GenericModel<K,P>
 }
 
 export interface IModelDataAdepter<K,P> {
