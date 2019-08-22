@@ -1,10 +1,10 @@
 import {ITestModelKey, ITestModelProperties, TestModel} from "./model";
-import {ReadCRUDExecutable} from "../src/executable/crud/read";
-import {ICRUDExecutableConfig} from "../src/executable/crud";
+import {CRUDExecutable, ICRUDExecutableConfig} from "../src/executable/crud";
 
 // test ReadCRUDExecutable implementation
-export class TestReadExecutable extends ReadCRUDExecutable<ITestModelKey, ITestModelProperties> {
-    constructor(props :ICRUDExecutableConfig<ITestModelKey, ITestModelProperties>) {
+export class TestReadExecutable extends CRUDExecutable<ITestModelKey, TestModel, ITestModelKey, ITestModelProperties> {
+    constructor(props :ICRUDExecutableConfig<ITestModelKey, TestModel, ITestModelKey, ITestModelProperties>) {
         super(props);
+        this.executor = CRUDExecutable.readExecutor;
     }
 }

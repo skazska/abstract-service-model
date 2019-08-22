@@ -4,14 +4,13 @@ import {expect, use}  from 'chai';
 // import sinonChai = require("sinon-chai");
 import {TestModel, TestModelFactory} from "./model";
 import {ITestStorageConfig, TestStorage} from "./model-storage";
-import {TestUpdateExecutable} from "./executable-crud-create";
+import {TestCreateExecutable} from "./executable-crud-create";
 import {AuthIdentity} from "../src";
 
 // use(sinonChai);
 
 const testStorageConfig :ITestStorageConfig = {
     data: [
-        // [ 'id', { data: new TestModel({id: 'id'}, {data: 'data'}) } ],
         [ 'di', { data: new TestModel({id: 'di'}, {data1: 'data1'}) } ]
     ],
     modelFactory :new TestModelFactory()
@@ -19,15 +18,15 @@ const testStorageConfig :ITestStorageConfig = {
 
 describe('TestCreateExecutable', () => {
     describe('scenario1, without authentication', () => {
-        let instance: TestUpdateExecutable = null;
+        let instance: TestCreateExecutable = null;
         let storage: TestStorage = null;
         beforeEach(() => {
             storage = new TestStorage(testStorageConfig);
-            instance = new TestUpdateExecutable({
+            instance = new TestCreateExecutable({
                 storage: storage
             });
         });
-        xit("#run should return successful Result with model, data should be entered in test storage", async () => {
+        it("#run should return successful Result with model, data should be entered in test storage", async () => {
             let data = {model: testStorageConfig.modelFactory.dataModel({data: 'data', id: 'id'}).get()};
             let runResult = await instance.run(data);
             expect(runResult.isFailure).to.be.false;
@@ -54,14 +53,14 @@ describe('TestCreateExecutable', () => {
         });
     });
     describe('scenario2, with authentication', () => {
-        let instance: TestUpdateExecutable = null;
+        let instance: TestCreateExecutable = null;
         let storage: TestStorage = null;
         let identity = new AuthIdentity('user', {create: true});
         beforeEach(() => {
             storage = new TestStorage(testStorageConfig);
         });
         it ('should return failure if accesObject differs', async () => {
-            instance = new TestUpdateExecutable({
+            instance = new TestCreateExecutable({
                 storage: storage,
                 accessObject: 'xcreate'
             });
@@ -72,7 +71,7 @@ describe('TestCreateExecutable', () => {
 
         });
         it ('should return success if accesObject same', async () => {
-            instance = new TestUpdateExecutable({
+            instance = new TestCreateExecutable({
                 storage: storage,
                 accessObject: 'create'
             });
