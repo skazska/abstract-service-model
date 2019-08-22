@@ -52,8 +52,8 @@ const deleteExecutor = async <K, P>(storage :AbstractModelStorage<K, P>, key :K)
 };
 
 export interface ICRUDExecutableConfig<I, O, K, P> extends IExecutableConfig {
-    storage :AbstractModelStorage<K, P>
-    // executor :(storage :AbstractModelStorage<K, P>, params: I)=>Promise<GenericResult<O, IRunError>>
+    storage? :AbstractModelStorage<K, P>
+    executor? :(storage :AbstractModelStorage<K, P>, params: I)=>Promise<GenericResult<O, IRunError>>
 }
 
 export interface ICUExecuteOptions {
@@ -68,7 +68,7 @@ export abstract class CRUDExecutable<I, O, K, P> extends AbstractExecutable<I, O
     constructor(props: ICRUDExecutableConfig<I, O, K, P>) {
         super(props);
         this.storage = props.storage;
-        // this.executor = props.executor;
+        this.executor = props.executor;
     }
 
     protected async _execute(params: I): Promise<GenericResult<O, IRunError>> {
