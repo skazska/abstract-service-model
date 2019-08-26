@@ -47,7 +47,7 @@ export class AuthIdentity implements IAuthIdentity {
     constructor(public subject :string, protected details :IAccessDetails, protected realm? :string) {}
 
     access(obj :string, act?: string) :GenericResult<any, IAuthError> {
-        const access :any = obj ? this.details[obj] : '*';
+        const access :any = this.details['*'] ? this.details['*'] : this.details[obj];
         return (access === null || typeof access === 'undefined')
             ? failure([AbstractAuth.error('action not permitted', this.subject, this.realm, obj, act)])
             : success(access);
@@ -60,12 +60,13 @@ export class AuthIdentity implements IAuthIdentity {
 
 export class RegExIdentity extends AuthIdentity {
     access(obj :string, act: string) :GenericResult<boolean, IAuthError> {
-        let accessResult = super.access(obj);
-        if (accessResult.isFailure) return success(false);
-        let access = accessResult.get();
-        if (access === '*') return success(true);
-        let re = new RegExp(access);
-        return success(re.test(act));
+        return success(Object.keys(this.details).some(obj => {
+            let ore = new RegExp(obj);
+            if (!ore.test(obj)) return false;
+            let access = this.details[obj];
+            let re = new RegExp(access);
+            return re.test(act);
+        }));
     };
 
     static getInstance(subject :string, details :IAccessDetails, realm? :string) {
