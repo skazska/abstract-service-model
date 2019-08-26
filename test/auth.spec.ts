@@ -35,10 +35,10 @@ describe('auth', () => {
         it('realmless identity.access returns operation result from auth details by op only', async () => {
             expect(identity.access('read', 'ok').get()).to.be.true;
             expect(identity.access('write', 'demo').get()).to.be.true;
-            expect(identity.access('write', 'demography').get()).to.be.false;
-            expect(identity.access('write', 'more').get()).to.be.false;
+            expect(identity.access('write', 'demography').isFailure).to.be.true;
+            expect(identity.access('write', 'more').isFailure).to.be.true;
             expect(identity.access('execute', 'get').get()).to.be.true;
-            expect(identity.access('x', 'trust').get()).to.be.false;
+            expect(identity.access('x', 'trust').isFailure).to.be.true;
             expect(identity.access('x', 'put').get()).to.be.true;
 
         });

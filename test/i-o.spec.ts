@@ -27,7 +27,9 @@ describe('io', () => {
         authenticator = new AuthTest(RegExIdentity.getInstance);
         token = (await authenticator.grant({test: 'read'}, 'testUser')).get();
         executable = new TestReadExecutable({
-            storage :new TestStorage(testStorageConfig)
+            storage :new TestStorage(testStorageConfig),
+            accessObject: 'test',
+            operation: 'read'
         });
         instance = new IOTest(executable, authenticator);
     });
