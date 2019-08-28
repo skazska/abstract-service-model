@@ -32,7 +32,7 @@ describe('auth', () => {
             expect(identity.subject).equal('subject');
         });
 
-        it('realmless identity.access returns operation result from auth details by op only', async () => {
+        it('identity.access returns operation result from auth details by op only', async () => {
             expect(identity.access('read', 'ok').get()).to.be.true;
             expect(identity.access('write', 'demo').get()).to.be.true;
             expect(identity.access('write', 'demography').isFailure).to.be.true;
@@ -40,6 +40,7 @@ describe('auth', () => {
             expect(identity.access('execute', 'get').get()).to.be.true;
             expect(identity.access('x', 'trust').isFailure).to.be.true;
             expect(identity.access('x', 'put').get()).to.be.true;
+            expect(identity.access('yarn', 'put').isFailure).to.be.true;
 
         });
     });

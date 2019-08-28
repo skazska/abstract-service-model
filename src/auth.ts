@@ -65,17 +65,19 @@ export class AuthIdentity implements IAuthIdentity {
 }
 
 export class RegExIdentity extends AuthIdentity {
-    access(obj :string, act: string) :GenericResult<boolean, IAuthError> {
+    access(object :string, operation: string) :GenericResult<boolean, IAuthError> {
         let access = Object.keys(this.details).some(obj => {
             let ore = new RegExp(obj);
-            if (!ore.test(obj)) return false;
+            if (!ore.test(object)) return false;
             let access = this.details[obj];
             let re = new RegExp(access);
-            return re.test(act);
+            return re.test(operation);
         });
         return access
             ? success(access)
-            : failure([AbstractAuth.error('action not permitted', this.subject, this.realm, obj, act)]);
+            : failure(
+                [AbstractAuth.error('action not permitted', this.subject, this.realm, object, operation)]
+            );
     };
 
     static getInstance(subject :string, details :IAccessDetails, realm? :string) {
