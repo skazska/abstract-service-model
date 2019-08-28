@@ -1,12 +1,20 @@
 import {GenericResult} from "./result";
 import {error, IError} from "./error";
+import {IAuthError} from "./auth";
 
 export interface IStorageError extends IError {
-    source? :any
+    source? :any,
+    isStorageError? :boolean
 }
+
+export const isStorageError = (error :IError) :error is IStorageError => {
+    return 'isStorageError' in error;
+};
+
 
 export const storageError = (message :string, source? :string) => {
     const err :IStorageError = error(message);
+    err.isStorageError = true;
     if (source) err.source = source;
     return err;
 };

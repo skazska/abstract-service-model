@@ -17,6 +17,7 @@ export interface IAuthError extends IError {
     realm? :string
     object? :string
     action? :string
+    isAuthError? :boolean,
 }
 
 export interface IAuthIdentity {
@@ -37,10 +38,15 @@ export const authError = (
     action? :string,
 ) :IAuthError => {
     const err :IAuthError = error(message);
+    err.isAuthError = true;
     if (realm) err.realm = realm;
-    if (object) err.realm = realm;
+    if (object) err.object = object;
     if (action) err.action = action;
     return err;
+};
+
+export const isAuthError = (error :IError) :error is IAuthError => {
+    return 'isAuthError' in error;
 };
 
 export class AuthIdentity implements IAuthIdentity {

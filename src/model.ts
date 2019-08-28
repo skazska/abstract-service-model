@@ -3,11 +3,17 @@ import {IError, error} from "./error";
 import {GenericResult, mergeResults} from "./result";
 
 export interface IModelError extends IError {
-    field? :string
+    field? :string,
+    isModelError? :boolean
 }
 
+export const isModelError = (error :IError) :error is IModelError => {
+    return 'isModelError' in error;
+};
+
 export const modelError = (message :string, field? :string) => {
-    const err = error(message);
+    const err :IModelError = error(message);
+    err.isModelError = true;
     if (field) err.field = field;
     return err;
 };

@@ -5,7 +5,12 @@ import {IError, error} from "./error";
 export interface IRunError extends IError {
     field? :string,
     operation? :string
+    isRunError? :boolean
 }
+
+export const isRunError = (error :IError) :error is IRunError => {
+    return 'isRunError' in error;
+};
 
 export interface IExecutable {
     run(params? :any, identity? :IAuthIdentity) :Promise<GenericResult<any, IRunError>>;
@@ -19,6 +24,7 @@ export interface IExecutableConfig {
 
 export const executionError = (message :string, operation? :string, field? :string) :IRunError => {
     const err :IRunError = error(message);
+    err.isRunError = true;
     if (field) err.field = field;
     if (operation) err.operation = operation;
     return err;
