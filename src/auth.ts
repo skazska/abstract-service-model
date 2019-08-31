@@ -1,17 +1,32 @@
 import {failure, GenericResult, success} from "./result";
 import {IError, error} from "./error";
 
+/**
+ * module provides Authentication classes templates and interfaces
+ * main concept entities are Auth and AuthIdentity
+ * Auth is to check token and provide relative AuthIdentity, as well as generate token for auth data
+ * AuthIdentity is to provide access control and corresponding auth data
+ */
+
+/**
+ * Common access details data details structure
+ */
 export interface IAccessDetails {
     [obj :string] :any
 }
 
+/**
+ * authentication data structure
+ */
 export interface IAuthData {
     subject :string,
     realms? :string[],
     details? :IAccessDetails
 }
 
-
+/**
+ * authentication failure data structure
+ */
 export interface IAuthError extends IError {
     subject? :string
     realm? :string
@@ -20,16 +35,32 @@ export interface IAuthError extends IError {
     isAuthError? :boolean,
 }
 
+/**
+ * Auth identity interface
+ */
 export interface IAuthIdentity {
     access(object: string, action?: string) :GenericResult<any, IAuthError>;
-    subject :string;
+    readonly subject :string;
+    readonly details :IAccessDetails,
+    readonly realm? :string
 }
 
+/**
+ * Auth interface
+ */
 export interface IAuth {
     identify (token :string, realm? :string) :Promise<GenericResult<IAuthIdentity, IAuthError>>;
     grant(info: any, subject :string, realms: string[]) :Promise<GenericResult<string, IAuthError>>;
 }
 
+/**
+ * auth error constructor
+ * @param message
+ * @param subject
+ * @param realm
+ * @param object
+ * @param action
+ */
 export const authError = (
     message :string,
     subject? :string,
@@ -45,13 +76,34 @@ export const authError = (
     return err;
 };
 
+/**
+ * authError type guard
+ * @param error
+ */
 export const isAuthError = (error :IError) :error is IAuthError => {
     return 'isAuthError' in error;
 };
 
+/**
+ * provides simple access control and corresponding auth data
+ */
 export class AuthIdentity implements IAuthIdentity {
-    constructor(public subject :string, protected details :IAccessDetails, protected realm? :string) {}
+    /**
+     * @param subject - user(auth subject)
+     * @param details - access details to check access from
+     * @param realm - realm
+     */
+    constructor(
+        public readonly subject :string,
+        public readonly details :IAccessDetails,
+        public readonly realm? :string
+    ) {}
 
+    /**
+     * returns access detail value by key name from obj param
+     * @param obj - access detail key
+     * @param act - irrelevant here
+     */
     access(obj :string, act?: string) :GenericResult<any, IAuthError> {
         const access :any = this.details['*'] ? this.details['*'] : this.details[obj];
         return (access === null || typeof access === 'undefined')
@@ -64,7 +116,15 @@ export class AuthIdentity implements IAuthIdentity {
     }
 }
 
+/**
+ * provides regexp access check control and corresponding auth data
+ */
 export class RegExIdentity extends AuthIdentity {
+    /**
+     * returns true if there is access details key matching `object` regex which value match `operation` regex
+     * @param object - regex string to check match with access details key
+     * @param operation - regex string to check match with access details value by key matched with object
+     */
     access(object :string, operation: string) :GenericResult<boolean, IAuthError> {
         let access = Object.keys(this.details).some(obj => {
             let ore = new RegExp(obj);
@@ -85,10 +145,16 @@ export class RegExIdentity extends AuthIdentity {
     }
 }
 
+/**
+ * Abstract Auth constructor options
+ */
 export interface IAuthOptions {
     secretSource?: any
 }
 
+/**
+ * provides identify method to get AuthIdentity by token, verifies token and returns Identity
+ */
 export abstract class AbstractAuth implements IAuth {
     protected constructor(
         protected identityConstructor :(subject :string, details :IAccessDetails, realm? :string) => IAuthIdentity,
