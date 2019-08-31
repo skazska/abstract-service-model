@@ -1,4 +1,3 @@
-import {IRunError} from "./executable";
 import {get} from "stack-trace";
 
 export interface IError {
@@ -6,8 +5,8 @@ export interface IError {
     stack?: any
 }
 
-export const error = (message :string) :IRunError => {
-    const err :IRunError = {
+export const error = (message :string) :IError => {
+    const err :IError = {
         message: message
     };
     err.stack = get();

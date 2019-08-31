@@ -1,7 +1,7 @@
 import {AbstractExecutable, IRunError} from "./executable";
 import {IAuth} from "./auth";
 import {GenericResult, success} from "./result";
-import {IError} from "./error";
+import {error, IError} from "./error";
 
 export interface IAuthTokenResult extends GenericResult<string, IError> {}
 
@@ -9,6 +9,20 @@ export class HandleResult<O> extends GenericResult<O, IError> {
     stage? :string;
     message? :string;
 }
+
+export interface IIOError extends IError {
+    isIOError? :boolean
+}
+export const isIOError = (error :IError) :error is IIOError => {
+    return 'isIOError' in error;
+};
+
+export const ioError = (message :string) :IIOError => {
+    const err :IIOError = error(message);
+    err.isIOError = true;
+    return err;
+};
+
 
 export interface IIOOptions {
     realm? :string
@@ -99,4 +113,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
             return this.fail('encode', 'unexpected', [e]);
         }
     };
+
+    static error = ioError
+
 }
