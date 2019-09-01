@@ -123,7 +123,7 @@ export class RegExIdentity extends AuthIdentity {
     /**
      * returns true if there is access details key matching `object` regex which value match `operation` regex
      * @param object - regex string to check match with access details key
-     * @param operation - regex string to check match with access details value by key matched with object
+     * @param operation - regex string (or array) to check match with access details value by key matched with object
      */
     access(object :string, operation: string) :GenericResult<boolean, IAuthError> {
         let access = Object.keys(this.details).some(obj => {
