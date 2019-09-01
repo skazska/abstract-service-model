@@ -1,6 +1,7 @@
 import {object as objectTools} from "@skazska/tools-data-transform";
 import {IError, error} from "./error";
-import {GenericResult, mergeResults} from "./result";
+import {GenericResult, mergeResults, success} from "./result";
+import pick = require("object.pick");
 
 export interface IModelError extends IError {
     field? :string,
@@ -52,8 +53,14 @@ export interface IModel {
     update (properties :any) :IModel;
 }
 
+/**
+ * generic model constructor options
+ */
 export interface IModelOptions {}
 
+/**
+ * Generic model implementation
+ */
 export abstract class GenericModel<K,P> implements IModel {
     protected _key :K;
     protected _properties :P;
@@ -104,17 +111,48 @@ export abstract class GenericModel<K,P> implements IModel {
     static error = modelError;
 }
 
+/**
+ * model constructor interface
+ */
 export interface IModelConstructor<K,P> {
     new(key :K, properties :P, options? :IModelOptions) :GenericModel<K,P>
 }
 
+/**
+ * model data adapter interface
+ */
 export interface IModelDataAdepter<K,P> {
     getKey (data :any) :GenericResult<K, IModelError>;
     getProperties (data :any) :GenericResult<P, IModelError>;
     getData (key :K, properties: P) :GenericResult<any, IModelError>;
 }
 
-export abstract class GenericModelFactory<K,P> {
+/**
+ * SimpleModelAdapter implements IModelDataAdepter, provides simple IO transformations for data which is superset
+ * of key and properties with same properties names and types
+ */
+export class SimpleModelAdapter<K, P> implements IModelDataAdepter<K, P> {
+    constructor(
+        protected keys :K[keyof K][],
+        protected props :P[keyof P][],
+    ) {}
+    getKey <D extends K & P>(data :D) :GenericResult<K, IModelError> {
+        return success(pick(data, this.keys));
+    };
+    getProperties <D extends K & P>(data :D) :GenericResult<P, IModelError> {
+        return success(pick(data, this.props));
+    };
+    getData <D extends K & P>(key: K, properties: P) :GenericResult<D, IModelError> {
+        let outputProps = pick(properties, this.props);
+        return success({...key, ...outputProps});
+    }
+}
+
+/**
+ * provides simple implementation of model factory providing methods for getting model key and properties and model
+ * itself from data as well as convert model to data uses model constructor and data adapter
+ */
+export class GenericModelFactory<K,P> {
     constructor(
         protected modelConstructor :IModelConstructor<K,P>,
         protected dataAdapter :IModelDataAdepter<K, P>

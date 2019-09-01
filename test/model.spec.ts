@@ -2,11 +2,11 @@
 import "mocha";
 import {expect, use}  from 'chai';
 // import sinonChai = require("sinon-chai");
-import {TestModel} from "./model";
+import {TestModel, TestModelDataAdapter} from "./model";
 // use(sinonChai);
 
 describe('model', () => {
-    describe('scenario1', () => {
+    describe('GenericModel descendant scenario1', () => {
         let model :TestModel = null;
         beforeEach(() => {
             model = new TestModel({id: 'id'}, {data: 'data'}, {option1: 'hi'});
@@ -42,4 +42,30 @@ describe('model', () => {
             expect(model.getProperties()).to.eql({data1: 'data1'});
         });
     });
+    describe('simple model adapter', function() {
+        let adapter = new TestModelDataAdapter(['id'], ['data1', 'data2']);
+        let data = {
+            id: 'id',
+            data: 'data',
+            data1: 'data1',
+            data2: 'data2'
+        };
+
+        // let model = new TestModel({id: 'id'}, {data: 'data'});
+
+        it('#getKey returns object with id property', () => {
+            expect(adapter.getKey(data).get()).eql({id: 'id'});
+        });
+
+        it('#getProperties returns object with properties data1 and data2', () => {
+            expect(adapter.getProperties(data).get()).eql({data1: 'data1', data2: 'data2'});
+        });
+
+        it('#getData returns data with properties of keys and properties combined', () => {
+            expect(adapter.getData({id: 'id'}, {data: 'data', data1: 'data1', data2: 'data2'}).get())
+                .eql({id: 'id', data1: 'data1', data2: 'data2'});
+        });
+
+    });
 });
+
