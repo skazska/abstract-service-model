@@ -130,8 +130,11 @@ export class RegExIdentity extends AuthIdentity {
             let ore = new RegExp(obj);
             if (!ore.test(object)) return false;
             let access = this.details[obj];
-            let re = new RegExp(access);
-            return re.test(operation);
+            if (!Array.isArray(access)) access = [access];
+            return access.some(access => {
+                let re = new RegExp(access);
+                return re.test(operation);
+            });
         });
         return access
             ? success(access)
