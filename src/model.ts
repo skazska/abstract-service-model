@@ -1,6 +1,6 @@
 import {object as objectTools} from "@skazska/tools-data-transform";
 import {IError, error} from "./error";
-import {GenericResult, mergeResults, success} from "./result";
+import {failure, GenericResult, mergeResults, success} from "./result";
 import pick = require("object.pick");
 
 export interface IModelError extends IError {
@@ -170,10 +170,14 @@ export class GenericModelFactory<K,P> {
             (results) => { return new this.modelConstructor(results[0], results[1])}
         );
     };
-    model (key: K, props: P) :GenericModel<K,P> {
-        return new this.modelConstructor(key, props);
+    model (key: K, props: P) :GenericResult<GenericModel<K,P>, IModelError> {
+        try {
+            return success(new this.modelConstructor(key, props));
+        } catch (e) {
+            return failure([modelError(e.message)]);
+        }
     };
-    data (model :IModel) :any {
+    data (model :IModel) :GenericResult<any, IModelError> {
         return this.dataAdapter.getData(model.getKey(), model.getProperties())
     }
 

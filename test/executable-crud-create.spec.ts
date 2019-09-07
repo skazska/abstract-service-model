@@ -46,7 +46,8 @@ describe('TestCreateExecutable', () => {
         });
 
         it("#run should return failure if no key provided and failure in model's newKey", async () => {
-            let data = {model: testStorageConfig.modelFactory.model(null, {data: 'data'})};
+            let model = testStorageConfig.modelFactory.model(null, {data: 'data'}).get();
+            let data = {model: model};
             let runResult = await instance.run(data);
             expect(runResult.isFailure).to.be.true;
             expect(runResult.errors[0].message).equal('use natural key');
