@@ -1,13 +1,18 @@
 import {IStorage, IStorageConfig, IStorageError, IStorageOperationOptions, storageError} from "../storage";
-import {GenericModel, GenericModelFactory, IModel} from "../model";
+import {GenericModelFactory, IModel} from "../model";
 import {GenericResult} from "../result";
 
+/**
+ * module provides Abstract model storage
+ */
 
+/** Abstract model storage constructor options */
 export interface IModelStorageConfig<K, P> extends IStorageConfig {
     modelFactory :GenericModelFactory<K, P>
 }
 
-export abstract class AbstractModelStorage<K, P> implements IStorage<K, P, IModel> {
+/** Abstract model storage */
+export abstract class AbstractModelStorage<K, P> implements IStorage<K, IModel> {
     protected modelFactory : GenericModelFactory<K, P>;
 
     protected constructor(props :IModelStorageConfig<K, P>) {
