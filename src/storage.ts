@@ -8,7 +8,8 @@ import {IAuthError} from "./auth";
 
 /** Basic storage error interface */
 export interface IStorageError extends IError {
-    source? :any,
+    source? :string,
+    original?: any,
     isStorageError? :boolean
 }
 
@@ -19,10 +20,11 @@ export const isStorageError = (error :IError) :error is IStorageError => {
 
 
 /** Basic storage error factory function */
-export const storageError = (message :string, source? :string) => {
+export const storageError = (message :string, source? :string, original? :any) => {
     const err :IStorageError = error(message);
     err.isStorageError = true;
     if (source) err.source = source;
+    if (original) err.original = original;
     return err;
 };
 
