@@ -44,9 +44,14 @@ describe('io', () => {
         let success = await instance.handler({auth: token, key: 'id', data: {id: 'id'}});
         expect(success).to.have.property('get');
         let data = success.get();
-        expect(data).to.have.property('result');
-        let model = data.result;
-        expect(testStorageConfig.modelFactory.data(model).get()).to.eql({id: 'id', data: 'data'})
+        expect(testStorageConfig.modelFactory.data(data).get()).to.eql({id: 'id', data: 'data'})
+    });
+    it('#handler returns handleResult with failure from executable', async () => {
+        let success = await instance.handler({auth: token, key: 'id', data: {idf: 'id'}});
+        expect(success.isFailure).to.be.true;
+        expect(success.errors[0]).to.haveOwnProperty('isRunError').eql(true);
+        expect(success.errors[0]).to.haveOwnProperty('message').eql('not found');
+        expect(success.errors[0]).to.haveOwnProperty('operation').eql('read from storage');
     });
 
 });

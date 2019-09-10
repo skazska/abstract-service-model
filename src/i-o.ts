@@ -5,11 +5,6 @@ import {error, IError} from "./error";
 
 export interface IAuthTokenResult extends GenericResult<string, IError> {}
 
-export class HandleResult<O> extends GenericResult<O, IError> {
-    stage? :string;
-    message? :string;
-}
-
 export interface IIOError extends IError {
     isIOError? :boolean
 }
@@ -42,12 +37,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
     /**
      * to perform actions on errors
      */
-    protected fail(stage :string, message :string, errors :IError[]) :HandleResult<O> {
-        const failure = new HandleResult(null, errors);
-        failure.message = message;
-        failure.stage = stage;
-        return failure;
-    };
+    protected abstract fail(stage :string, message :string, errors :IError[]) :O;
 
     /**
      * to extract auth tokens from external Input
@@ -68,7 +58,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
     /**
      * handler
      */
-    public async handler(inputs: I) :Promise<GenericResult<O,IError>> {
+    public async handler(inputs: I) :Promise<O> {
         let authPassResult;
         let authTokenResult :IAuthTokenResult;
         let dataResult :GenericResult<EI, IError>;
@@ -108,7 +98,7 @@ export abstract class AbstractIO<I, EI, EO, O> {
 
         // handle results
         try {
-            return success(this.success(runResult.get()));
+            return this.success(runResult.get());
         } catch (e) {
             return this.fail('encode', 'unexpected', [e]);
         }
