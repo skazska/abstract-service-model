@@ -2,10 +2,8 @@ import {
     GenericModelFactory,
     GenericModel,
     IModelOptions,
-    IModelDataAdepter,
-    ModelValidationResult, IModelError, modelError, SimpleModelAdapter
+    SimpleModelAdapter
 } from "../src/model";
-import {failure, GenericResult, success} from "../src";
 
 export interface ITestModelKey {
     id :string

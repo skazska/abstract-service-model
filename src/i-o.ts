@@ -23,10 +23,14 @@ export interface IIOOptions {
     realm? :string
 }
 
+export interface IIO {
+    handler(inputs: any) :Promise<any>
+}
+
 /**
  * @class provides convert and handle external Input and service data (like auth tokens) to run executable (internal)
  */
-export abstract class AbstractIO<I, EI, EO, O> {
+export abstract class AbstractIO<I, EI, EO, O> implements IIO {
 
     protected constructor(
         protected executable :AbstractExecutable<EI, EO>,
