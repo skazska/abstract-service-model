@@ -67,5 +67,18 @@ describe('model', () => {
         });
 
     });
+
+    describe('accessors decorator', () => {
+        let model :TestModel;
+        beforeEach(() => {
+            model = new TestModel({id: 'id'}, {data: 'data', data1: 'data1', data2: 'data2'}, {option1: 'hi'});
+        });
+        it('#get should value by field name', () => {
+            expect(model['id']).eql('id');
+            expect(model['data']).eql('data');
+            expect(model['data1']).eql('data1');
+            expect(model['data2']).eql('data2');
+        });
+    })
 });
 

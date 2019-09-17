@@ -2,7 +2,10 @@ import {
     GenericModelFactory,
     GenericModel,
     IModelOptions,
-    SimpleModelAdapter
+    SimpleModelAdapter,
+    ISchema,
+    IModelError,
+    modelError
 } from "../src/model";
 
 export interface ITestModelKey {
@@ -19,8 +22,21 @@ export interface ITestModelOptions extends IModelOptions{
     option1: string
 }
 
-export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties> {
+export class TestSchema implements ISchema {
+    private fields : {[name :string] :RegExp};
+    constructor () {
+        this.fields = {
+            data: new RegExp('data'),
+            data1: new RegExp('data1'),
+            data2: new RegExp('data2'),
+        }
+    }
+    validateField(name: string, value: any): true | IModelError {
+        return this.fields[name].test(<string>value) ? true : modelError('not match pattern', name);
+    }
+}
 
+export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties> {
     constructor(key :ITestModelKey, properties :ITestModelProperties, options? :ITestModelOptions) {
         super(key, properties);
     }
