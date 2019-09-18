@@ -3,10 +3,10 @@ import {
     GenericModel,
     IModelOptions,
     SimpleModelAdapter,
-    ISchema,
     IModelError,
     modelError
 } from "../src/model";
+import {ISchema} from "../src/model/schema";
 
 export interface ITestModelKey {
     id :string
