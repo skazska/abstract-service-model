@@ -1,6 +1,6 @@
 // import {
 //     GenericSchemaModel,
-//     AbstractModelSchema,
+//     ModelSchema,
 //     IGenericSchemaModelOptions
 // } from "../src/model/schema";
 // import {failure, ModelValidationResult, success} from "../src";
@@ -14,16 +14,16 @@
 //     data1? :string
 // }
 //
-// export class Schema extends AbstractModelSchema<ITestModelKey, ITestModelProperties> {
+// export class Schema extends ModelSchema<ITestModelKey, ITestModelProperties> {
 //     validateKey(key :ITestModelKey) :ModelValidationResult {
 //         if (key.id.length >= 10)
-//             return failure([ AbstractModelSchema.error('length should be less than 10', 'id') ]);
+//             return failure([ ModelSchema.error('length should be less than 10', 'id') ]);
 //         return success(true);
 //
 //     };
 //     validateProperties(properties :ITestModelProperties) :ModelValidationResult {
 //         if (!(properties.data || properties.data1))
-//             return failure([ AbstractModelSchema.error('data or data1 field should present', '*') ]);
+//             return failure([ ModelSchema.error('data or data1 field should present', '*') ]);
 //         return success(true);
 //     };
 // }

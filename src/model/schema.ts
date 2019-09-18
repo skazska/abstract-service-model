@@ -7,13 +7,36 @@ import {
 } from "../model";
 import {failure, GenericResult, success} from "../result";
 
+export enum JsTypes {
+    string = 'string',
+    number = 'number',
+    undefined = 'undefined',
+    boolean = 'boolean',
+    object = 'object'
+}
+
 /**
- * describes field description
+ * field description and validation
  */
 export interface ISchemaField {
+    fieldType: string;
+    dataType: string;
+    name: string;
     validate(value: any) :IModelError[];
 }
 
+export class JSTypedSchemaField implements ISchemaField {
+    public readonly fieldType: string;
+    constructor(public readonly name: string, public readonly dataType: JsTypes) {
+        this.fieldType = dataType;
+    };
+
+    validate(value: any) :IModelError[] {
+        const result :IModelError[] = [];
+        if (typeof value == this.dataType) result.push(modelError('js type mismatch', this.name));
+        return result;
+    };
+}
 
 
 /**
@@ -34,7 +57,7 @@ interface ISchemaFields {
     [name :string] :ISchemaField;
 }
 
-export class AbstractModelSchema implements ISchema {
+export class ModelSchema implements ISchema {
     _keyFields :ISchemaFields;
     _propertyFields :ISchemaFields;
     _errors :IModelError[];
@@ -124,17 +147,55 @@ export abstract class GenericSchemaModel<K, P> extends GenericModel<K, P> implem
 }
 
 /**
- * SimpleModelAdapter implements IModelDataAdepter, provides simple IO transformations for data which is superset
+ * SchemaModelAdapter implements IModelDataAdepter, provides simple IO transformations for data which is superset
  * of key and properties with same properties names and types
  */
-export abstract class AbstractSchemaModelAdapter<K, P> implements IModelDataAdepter<K, P> {
-    protected constructor(protected schema :ISchema) {};
+export interface IFieldMap {
+    [name :string] :string;
+}
 
-    protected abstract extractKey(data: any) :K;
+export class SchemaModelAdapter<K, P> implements IModelDataAdepter<K, P> {
+    constructor(protected schema :ISchema, public fieldMap: IFieldMap) {};
 
-    protected abstract extractProperties(data: any) :P;
+    protected extract(fields :ISchemaFields, data :any) :any{
+        const result :any = {};
+        for (let name in fields) {
+            if (this.fieldMap) {
+                const dataName = this.fieldMap[name];
+                if (dataName) result[name] = data[dataName];
+            } else {
+                result[name] = data[name];
+            }
+        }
+    }
 
-    protected abstract composeData<D extends K & P>(key :K, properties: P) :D;
+    protected extractKey(data: any) :K {
+        return this.extract(this.schema.keyFields(), data);
+    };
+
+    protected extractProperties(data: any) :P {
+        return this.extract(this.schema.propertyFields(), data);
+    };
+
+    protected compose(fields :ISchemaFields, data :any) :any {
+        const result :any = {};
+        for (let name in fields) {
+            if (this.fieldMap) {
+                const dataName = this.fieldMap[name];
+                if (dataName) result[dataName] = data[name];
+            } else {
+                result[name] = data[name];
+            }
+        }
+        return result;
+    }
+
+    protected composeData<D extends K & P>(key :K, properties: P) :D {
+        const keyData = this.compose(this.schema.keyFields(), key);
+        const propertyData = this.compose(this.schema.propertyFields(), properties);
+
+        return {...keyData, ...propertyData};
+    };
 
     getKey <D extends K & P>(data :D) :GenericResult<K, IModelError> {
         let key :K;

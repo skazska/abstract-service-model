@@ -1,12 +1,8 @@
 import {
     GenericModelFactory,
-    GenericModel,
-    IModelOptions,
     SimpleModelAdapter,
-    IModelError,
-    modelError
 } from "../src/model";
-import {ISchema} from "../src/model/schema";
+import {GenericSchemaModel, SchemaModelAdapter} from "../src/model/schema";
 
 export interface ITestModelKey {
     id :string
@@ -18,27 +14,9 @@ export interface ITestModelProperties {
     data2? :string
 }
 
-export interface ITestModelOptions extends IModelOptions{
-    option1: string
-}
-
-export class TestSchema implements ISchema {
-    private fields : {[name :string] :RegExp};
-    constructor () {
-        this.fields = {
-            data: new RegExp('data'),
-            data1: new RegExp('data1'),
-            data2: new RegExp('data2'),
-        }
-    }
-    validateField(name: string, value: any): true | IModelError {
-        return this.fields[name].test(<string>value) ? true : modelError('not match pattern', name);
-    }
-}
-
-export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties> {
-    constructor(key :ITestModelKey, properties :ITestModelProperties, options? :ITestModelOptions) {
-        super(key, properties);
+export class TestModel extends GenericSchemaModel<ITestModelKey, ITestModelProperties> {
+    constructor(key, properties, options?) {
+        super(key, properties, options);
     }
 
     get id() {
@@ -64,6 +42,20 @@ export class TestModel extends GenericModel<ITestModelKey, ITestModelProperties>
 }
 
 export class TestModelDataAdapter extends SimpleModelAdapter<ITestModelKey,ITestModelProperties> {}
+export class TestSchemaModelAdapter extends SchemaModelAdapter<ITestModelKey,ITestModelProperties> {
+    protected composeData<D extends ITestModelKey & ITestModelProperties>(key: ITestModelKey, properties: ITestModelProperties): D {
+        return undefined;
+    }
+
+    protected extractKey(data: any): ITestModelKey {
+        return undefined;
+    }
+
+    protected extractProperties(data: any): ITestModelProperties {
+        return undefined;
+    }
+
+}
 
 export class TestModelFactory extends GenericModelFactory<ITestModelKey,ITestModelProperties> {
     constructor() {
