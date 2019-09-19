@@ -61,15 +61,15 @@ export interface IModelOptions {}
 /**
  * Generic model implementation
  */
-export abstract class GenericModel<K,P> implements IModel {
+export class GenericModel<K,P> implements IModel {
     protected _key :K;
     protected _properties :P;
     protected _options :any;
 
-    protected constructor(key :K, properties :P, options? :IModelOptions) {
+    constructor(key :K, properties :P, options? :IModelOptions) {
         this.setOptions(options);
-        this.setKey(key);
         this.setProperties(properties);
+        this.setKey(key);
     }
 
     protected setOptions(options: IModelOptions) {
