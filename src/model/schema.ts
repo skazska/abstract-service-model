@@ -15,28 +15,78 @@ export enum JsTypes {
     object = 'object'
 }
 
+export interface IFieldDescription {
+    [property :string] :any
+}
+
 /**
  * field description and validation
  */
 export interface ISchemaField {
-    fieldType: string;
-    dataType: string;
     name: string;
+    fieldType: string;
+    description() :IFieldDescription;
     validate(value: any) :IModelError[];
 }
 
-export class JSTypedSchemaField implements ISchemaField {
-    public readonly fieldType: string;
-    constructor(public readonly name: string, public readonly dataType: JsTypes) {
-        this.fieldType = dataType;
+export interface ISchemaValidator {
+    name :string;
+    description() :string;
+    check(value :any): null|string;
+}
+
+export class JSTypeSchemaValidator implements ISchemaValidator {
+    public readonly name: string;
+    constructor(public readonly dataType: JsTypes) {
+        this.name = 'required';
     };
 
+    check(value: any): string | null {
+        return (typeof value === this.dataType || typeof value === 'undefined') ? null : 'js type mismatch';
+    }
+
+    description(): string {
+        return 'of type ' + this.dataType;
+    }
+}
+
+export class RequiredSchemaValidator implements ISchemaValidator {
+    public readonly name: string;
+    constructor() {
+        this.name = 'required';
+    };
+
+    check(value: any): string | null {
+        return typeof value == 'undefined' ? 'missing field' : null;
+    }
+
+    description(): string {
+        return 'required';
+    }
+}
+
+export class SchemaField implements ISchemaField {
+    constructor(
+        public readonly name: string,
+        public readonly fieldType: string,
+        public readonly validators: ISchemaValidator[]
+    ) {};
+
+    description(): IFieldDescription {
+        return this.validators.reduce((description, validator) => {
+            description[validator.name] = validator.description();
+            return description;
+        }, {});
+    }
+
     validate(value: any) :IModelError[] {
-        const result :IModelError[] = [];
-        if (typeof value == this.dataType) result.push(modelError('js type mismatch', this.name));
-        return result;
+        return this.validators.map(validator => {
+            const result = validator.check(value);
+            return result ? modelError(result, this.name) : null
+        }).filter(error => !!error);
     };
 }
+
 
 
 /**
@@ -53,9 +103,7 @@ export interface ISchema {
     field(name :string) :ISchemaField;
 }
 
-interface ISchemaFields {
-    [name :string] :ISchemaField;
-}
+type ISchemaFields = ISchemaField[];
 
 export class ModelSchema implements ISchema {
     _keyFields :ISchemaFields;
@@ -88,12 +136,10 @@ export class ModelSchema implements ISchema {
     }
 
     protected _validate(fields :ISchemaFields, data: any): IModelError[] {
-        let errors :IModelError[] = [];
-        for (let field in fields) {
-            const fieldErrors = fields[field].validate(data[field]);
-            if (fieldErrors.length) errors = errors.concat(fieldErrors);
-        }
-        return errors;
+        if (!data) return [modelError('no data')];
+        return fields.reduce((errors, field) :IModelError[] => {
+            return errors.concat(field.validate(data[field.name]));
+        }, []);
     }
 
     validateKey(key: any) :IModelError[] {
@@ -106,7 +152,8 @@ export class ModelSchema implements ISchema {
 
     validate(model: IModel): IModelError[] {
         this.clear();
-        this._errors = this.validateKey(model.getKey());
+        this._errors = [];
+        if (model.hasKey()) this._errors = this._errors.concat(this.validateKey(model.getKey()));
         this._errors = this._errors.concat(this.validateProperties(model.getProperties()));
         return this._errors;
     }
@@ -120,8 +167,13 @@ export interface ISchemaModelOptions extends IModelOptions {
     schema: ISchema
 }
 
-export abstract class GenericSchemaModel<K, P> extends GenericModel<K, P> implements IModel {
+export class GenericSchemaModel<K, P> extends GenericModel<K, P> implements IModel {
     protected _schema :ISchema;
+
+    constructor(key :K, properties :P, options :ISchemaModelOptions) {
+        super(key, properties, options);
+    }
+
     protected setOptions(options: ISchemaModelOptions) {
         super.setOptions(options);
         this._schema = options.schema;
@@ -144,6 +196,8 @@ export abstract class GenericSchemaModel<K, P> extends GenericModel<K, P> implem
         this._schema.validate(this);
         return result;
     }
+
+    static error = modelError;
 }
 
 /**
@@ -154,19 +208,19 @@ export interface IFieldMap {
     [name :string] :string;
 }
 
-export class SchemaModelAdapter<K, P> implements IModelDataAdepter<K, P> {
+export class SchemaModelAdapter<K, P, D> implements IModelDataAdepter<K, P> {
     constructor(protected schema :ISchema, public fieldMap: IFieldMap) {};
 
     protected extract(fields :ISchemaFields, data :any) :any{
-        const result :any = {};
-        for (let name in fields) {
+        return fields.reduce((result, field) => {
             if (this.fieldMap) {
-                const dataName = this.fieldMap[name];
-                if (dataName) result[name] = data[dataName];
+                const dataName = this.fieldMap[field.name];
+                if (dataName) result[field.name] = data[dataName];
             } else {
-                result[name] = data[name];
+                result[field.name] = data[field.name];
             }
-        }
+            return result;
+        }, {});
     }
 
     protected extractKey(data: any) :K {
@@ -178,26 +232,25 @@ export class SchemaModelAdapter<K, P> implements IModelDataAdepter<K, P> {
     };
 
     protected compose(fields :ISchemaFields, data :any) :any {
-        const result :any = {};
-        for (let name in fields) {
+        return fields.reduce((result, field) => {
             if (this.fieldMap) {
-                const dataName = this.fieldMap[name];
-                if (dataName) result[dataName] = data[name];
+                const dataName = this.fieldMap[field.name];
+                if (dataName) result[dataName] = data[field.name];
             } else {
-                result[name] = data[name];
+                result[field.name] = data[field.name];
             }
-        }
-        return result;
+            return result;
+        }, {});
     }
 
-    protected composeData<D extends K & P>(key :K, properties: P) :D {
+    protected composeData(key :K, properties: P) :D {
         const keyData = this.compose(this.schema.keyFields(), key);
         const propertyData = this.compose(this.schema.propertyFields(), properties);
 
         return {...keyData, ...propertyData};
     };
 
-    getKey <D extends K & P>(data :D) :GenericResult<K, IModelError> {
+    getKey (data :D) :GenericResult<K, IModelError> {
         let key :K;
         try {
             key= this.extractKey(data);
@@ -207,7 +260,7 @@ export class SchemaModelAdapter<K, P> implements IModelDataAdepter<K, P> {
         const errors = this.schema.validateKey(key);
         return new GenericResult<K, IModelError>(key, errors);
     };
-    getProperties <D extends K & P>(data :D) :GenericResult<P, IModelError> {
+    getProperties (data :D) :GenericResult<P, IModelError> {
         let properties :P;
         try {
             properties= this.extractProperties(data);
@@ -217,7 +270,7 @@ export class SchemaModelAdapter<K, P> implements IModelDataAdepter<K, P> {
         const errors = this.schema.validateProperties(properties);
         return new GenericResult<P, IModelError>(properties, errors);
     };
-    getData <D extends K & P>(key: K, properties: P) :GenericResult<D, IModelError> {
+    getData (key: K, properties: P) :GenericResult<D, IModelError> {
         return success(this.composeData(key, properties));
     }
 }
