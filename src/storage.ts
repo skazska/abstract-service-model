@@ -36,8 +36,8 @@ export interface IStorageOperationOptions {}
 
 /** Abstract storage interface */
 export interface IStorage<K, D> {
-    newKey?(options?: IStorageOperationOptions) :Promise<GenericResult<K, IStorageError>>
-    load(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<D, IStorageError>>
-    save(data :D, options?: IStorageOperationOptions) :Promise<GenericResult<any, IStorageError>>
-    erase(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<any, IStorageError>>
+    newKey?(options?: IStorageOperationOptions) :Promise<GenericResult<K>>
+    load(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<D>>
+    save(data :D, options?: IStorageOperationOptions) :Promise<GenericResult<any>>
+    erase(key :K, options?: IStorageOperationOptions) :Promise<GenericResult<any>>
 }

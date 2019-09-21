@@ -3,7 +3,7 @@ import {IAuth} from "./auth";
 import {GenericResult, success} from "./result";
 import {error, IError} from "./error";
 
-export interface IAuthTokenResult extends GenericResult<string, IError> {}
+export interface IAuthTokenResult extends GenericResult<string> {}
 
 export interface IIOError extends IError {
     isIOError? :boolean
@@ -51,7 +51,7 @@ export abstract class AbstractIO<I, EI, EO, O> implements IIO {
     /**
      * to extract data for executable from external Input
      */
-    protected abstract data(inputs: I) :GenericResult<EI, IError>;
+    protected abstract data(inputs: I) :GenericResult<EI>;
 
     /**
      * to perform actions on successful executable run
@@ -65,8 +65,8 @@ export abstract class AbstractIO<I, EI, EO, O> implements IIO {
     public async handler(inputs: I) :Promise<O> {
         let authPassResult;
         let authTokenResult :IAuthTokenResult;
-        let dataResult :GenericResult<EI, IError>;
-        let runResult :GenericResult<EO, IRunError>;
+        let dataResult :GenericResult<EI>;
+        let runResult :GenericResult<EO>;
 
         if (this.authenticator) {
             try {

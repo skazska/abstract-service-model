@@ -22,11 +22,11 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
         this._data = new Map(config.data);
     }
 
-    newKey(options?: IStorageOperationOptions): Promise<GenericResult<ITestModelKey, IStorageError>> {
+    newKey(options?: IStorageOperationOptions): Promise<GenericResult<ITestModelKey>> {
         return Promise.resolve(failure([AbstractModelStorage.error('use natural key')]));
     }
 
-    load(key :ITestModelKey) :Promise<GenericResult<TestModel, IStorageError>> {
+    load(key :ITestModelKey) :Promise<GenericResult<TestModel>> {
         return new Promise((resolve) => {
             setTimeout(() => {
                 let data = this._data.get(key.id);
@@ -36,7 +36,7 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
             }, 10);
         });
     }
-    save(data :TestModel) :Promise<GenericResult<any, IStorageError>> {
+    save(data :TestModel) :Promise<GenericResult<any>> {
         return new Promise((resolve) => {
             setTimeout(() => {
                 this._data.set(data.getKey().id, {data: data});
@@ -44,7 +44,7 @@ export class TestStorage extends AbstractModelStorage<ITestModelKey, ITestModelP
             }, 10);
         });
     }
-    erase(key :ITestModelKey) :Promise<GenericResult<any, IStorageError>> {
+    erase(key :ITestModelKey) :Promise<GenericResult<any>> {
         return new Promise((resolve) => {
             setTimeout(() => {
                 let data = this._data.get(key.id);

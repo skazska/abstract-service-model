@@ -39,7 +39,7 @@ export interface IAuthError extends IError {
  * Auth identity interface
  */
 export interface IAuthIdentity {
-    access(object: string, action?: string) :GenericResult<any, IAuthError>;
+    access(object: string, action?: string) :GenericResult<any>;
     readonly subject :string;
     readonly details :IAccessDetails,
     readonly realm? :string
@@ -49,8 +49,8 @@ export interface IAuthIdentity {
  * Auth interface
  */
 export interface IAuth {
-    identify (token :string, realm? :string) :Promise<GenericResult<IAuthIdentity, IAuthError>>;
-    grant(info: any, subject :string, realms: string[]) :Promise<GenericResult<string, IAuthError>>;
+    identify (token :string, realm? :string) :Promise<GenericResult<IAuthIdentity>>;
+    grant(info: any, subject :string, realms: string[]) :Promise<GenericResult<string>>;
 }
 
 /**
@@ -104,7 +104,7 @@ export class AuthIdentity implements IAuthIdentity {
      * @param obj - access detail key
      * @param act - irrelevant here
      */
-    access(obj :string, act?: string) :GenericResult<any, IAuthError> {
+    access(obj :string, act?: string) :GenericResult<any> {
         const access :any = this.details['*'] ? this.details['*'] : this.details[obj];
         return (access === null || typeof access === 'undefined')
             ? failure([AbstractAuth.error('action not permitted', this.subject, this.realm, obj, act)])
@@ -125,7 +125,7 @@ export class RegExIdentity extends AuthIdentity {
      * @param object - regex string to check match with access details key
      * @param operation - regex string (or array) to check match with access details value by key matched with object
      */
-    access(object :string, operation: string) :GenericResult<boolean, IAuthError> {
+    access(object :string, operation: string) :GenericResult<boolean> {
         let access = Object.keys(this.details).some(obj => {
             let ore = new RegExp(obj);
             if (!ore.test(object)) return false;
@@ -164,18 +164,18 @@ export abstract class AbstractAuth implements IAuth {
         protected options :IAuthOptions = {}
     ) {}
 
-    protected secret() :Promise<GenericResult<any, IAuthError>> {
+    protected secret() :Promise<GenericResult<any>> {
         return Promise.resolve(success(this.options.secretSource));
     };
 
-    protected abstract verify(secret: any, token :string, realm? :string) :Promise<GenericResult<IAuthData, IAuthError>>;
+    protected abstract verify(secret: any, token :string, realm? :string) :Promise<GenericResult<IAuthData>>;
 
-    async identify (token :string, realm? :string) :Promise<GenericResult<IAuthIdentity, IAuthError>> {
+    async identify (token :string, realm? :string) :Promise<GenericResult<IAuthIdentity>> {
         try {
             let secret = await this.secret();
-            if (secret.isFailure) return failure(secret.errors);
+            if (secret.isFailure) return secret.asFailure();
             let details = await this.verify(secret.get(), token, realm);
-            return details.wrap(data => {
+            return details.transform(data => {
                 let {subject, details} = data;
                 return this.identityConstructor(subject, details, realm);
             });
@@ -184,7 +184,7 @@ export abstract class AbstractAuth implements IAuth {
         }
     }
 
-    abstract grant(details: IAccessDetails, subject :string, realms? :string[]) :Promise<GenericResult<string, IAuthError>>
+    abstract grant(details: IAccessDetails, subject :string, realms? :string[]) :Promise<GenericResult<string>>
 
     static error = authError;
 }

@@ -13,7 +13,7 @@ export interface IInputTest {
     data: any
 }
 
-export class OutputTest extends GenericResult<IModel, IError> {
+export class OutputTest extends GenericResult<IModel> {
     message? :string;
     stage? :string;
 }
@@ -35,7 +35,7 @@ export class IOTest extends AbstractIO <IInputTest, ITestModelKey, IModel, Outpu
         return success(input.auth);
     };
 
-    protected data(inputs: IInputTest) :GenericResult<ITestModelKey, IError> {
+    protected data(inputs: IInputTest) :GenericResult<ITestModelKey> {
         return success(inputs.data);
     };
 

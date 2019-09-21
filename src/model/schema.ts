@@ -250,7 +250,7 @@ export class SchemaModelAdapter<K, P, D> implements IModelDataAdepter<K, P> {
         return {...keyData, ...propertyData};
     };
 
-    getKey (data :D) :GenericResult<K, IModelError> {
+    getKey (data :D) :GenericResult<K> {
         let key :K;
         try {
             key= this.extractKey(data);
@@ -258,9 +258,9 @@ export class SchemaModelAdapter<K, P, D> implements IModelDataAdepter<K, P> {
             return failure([modelError(e.message, null)]);
         }
         const errors = this.schema.validateKey(key);
-        return new GenericResult<K, IModelError>(key, errors);
+        return new GenericResult<K>(key, errors);
     };
-    getProperties (data :D) :GenericResult<P, IModelError> {
+    getProperties (data :D) :GenericResult<P> {
         let properties :P;
         try {
             properties= this.extractProperties(data);
@@ -268,9 +268,9 @@ export class SchemaModelAdapter<K, P, D> implements IModelDataAdepter<K, P> {
             return failure([modelError(e.message, null)]);
         }
         const errors = this.schema.validateProperties(properties);
-        return new GenericResult<P, IModelError>(properties, errors);
+        return new GenericResult<P>(properties, errors);
     };
-    getData (key: K, properties: P) :GenericResult<D, IModelError> {
+    getData (key: K, properties: P) :GenericResult<D> {
         return success(this.composeData(key, properties));
     }
 }
