@@ -20,7 +20,6 @@ export interface IAccessDetails {
  */
 export interface IAuthData {
     subject :string,
-    realms? :string[],
     details? :IAccessDetails
 }
 
