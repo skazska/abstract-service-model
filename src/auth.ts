@@ -29,7 +29,6 @@ export interface IAuthData {
  */
 export interface IAuthError extends IError {
     subject? :string
-    realm? :string
     object? :string
     action? :string
     isAuthError? :boolean,
@@ -42,35 +41,41 @@ export interface IAuthIdentity {
     access(object: string, action?: string) :GenericResult<any>;
     readonly subject :string;
     readonly details :IAccessDetails,
-    readonly realm? :string
 }
+
+/**
+ * Auth identify options
+ */
+export interface IAuthIdentifyOptions {}
+
+/**
+ * Auth grant options
+ */
+export interface IAuthGrantOptions {}
 
 /**
  * Auth interface
  */
 export interface IAuth {
-    identify (token :string, realm? :string) :Promise<GenericResult<IAuthIdentity>>;
-    grant(info: any, subject :string, realms: string[]) :Promise<GenericResult<string>>;
+    identify (token :string, options? :IAuthIdentifyOptions) :Promise<GenericResult<IAuthIdentity>>;
+    grant(info: any, subject :string, options? :IAuthGrantOptions) :Promise<GenericResult<string>>;
 }
 
 /**
  * auth error constructor
  * @param message
  * @param subject
- * @param realm
  * @param object
  * @param action
  */
 export const authError = (
     message :string,
     subject? :string,
-    realm? :string,
     object? :string,
     action? :string,
 ) :IAuthError => {
     const err :IAuthError = error(message);
     err.isAuthError = true;
-    if (realm) err.realm = realm;
     if (object) err.object = object;
     if (action) err.action = action;
     return err;
@@ -85,18 +90,23 @@ export const isAuthError = (error :IError) :error is IAuthError => {
 };
 
 /**
+ * AuthIdentity constructor options
+ */
+export interface IAuthIdentityOptions {
+}
+
+/**
  * provides simple access control and corresponding auth data
  */
 export class AuthIdentity implements IAuthIdentity {
     /**
      * @param subject - user(auth subject)
      * @param details - access details to check access from
-     * @param realm - realm
      */
     constructor(
         public readonly subject :string,
         public readonly details :IAccessDetails,
-        public readonly realm? :string
+        public readonly options? :IAuthIdentityOptions
     ) {}
 
     /**
@@ -107,12 +117,12 @@ export class AuthIdentity implements IAuthIdentity {
     access(obj :string, act?: string) :GenericResult<any> {
         const access :any = this.details['*'] ? this.details['*'] : this.details[obj];
         return (access === null || typeof access === 'undefined')
-            ? failure([AbstractAuth.error('action not permitted', this.subject, this.realm, obj, act)])
+            ? failure([AbstractAuth.error('action not permitted', this.subject, obj, act)])
             : success(access);
     };
 
-    static getInstance(subject :string, details :IAccessDetails, realm? :string) {
-        return new AuthIdentity(subject, details, realm);
+    static getInstance(subject :string, details :IAccessDetails, options? :IAuthIdentityOptions) {
+        return new AuthIdentity(subject, details, options);
     }
 }
 
@@ -139,12 +149,12 @@ export class RegExIdentity extends AuthIdentity {
         return access
             ? success(access)
             : failure(
-                [AbstractAuth.error('action not permitted', this.subject, this.realm, object, operation)]
+                [AbstractAuth.error('action not permitted', this.subject, object, operation)]
             );
     };
 
-    static getInstance(subject :string, details :IAccessDetails, realm? :string) {
-        return new RegExIdentity(subject, details, realm);
+    static getInstance(subject :string, details :IAccessDetails, options? :IAuthIdentityOptions) {
+        return new RegExIdentity(subject, details, options);
     }
 }
 
@@ -156,11 +166,23 @@ export interface IAuthOptions {
 }
 
 /**
+ * Auth identify options
+ */
+export interface IAuthVerifyOptions {
+}
+
+/**  */
+export interface IAbstractAuthIdentifyOptions extends IAuthIdentifyOptions {
+    verifyOptions :IAuthVerifyOptions,
+    identityOptions :IAuthIdentityOptions
+}
+
+/**
  * provides identify method to get AuthIdentity by token, verifies token and returns Identity
  */
 export abstract class AbstractAuth implements IAuth {
     protected constructor(
-        protected identityConstructor :(subject :string, details :IAccessDetails, realm? :string) => IAuthIdentity,
+        protected identityConstructor :(subject :string, details :IAccessDetails, options? :IAuthIdentityOptions) => IAuthIdentity,
         protected options :IAuthOptions = {}
     ) {}
 
@@ -168,22 +190,24 @@ export abstract class AbstractAuth implements IAuth {
         return Promise.resolve(success(this.options.secretSource));
     };
 
-    protected abstract verify(secret: any, token :string, realm? :string) :Promise<GenericResult<IAuthData>>;
+    //TODO refactor: subject && realms -> options
+    protected abstract verify(secret: any, token :string, options? :IAuthVerifyOptions) :Promise<GenericResult<IAuthData>>;
 
-    async identify (token :string, realm? :string) :Promise<GenericResult<IAuthIdentity>> {
+    async identify (token :string, options? :IAbstractAuthIdentifyOptions) :Promise<GenericResult<IAuthIdentity>> {
         try {
             let secret = await this.secret();
             if (secret.isFailure) return secret.asFailure();
-            let details = await this.verify(secret.get(), token, realm);
+            let details = await this.verify(secret.get(), token, options && options.verifyOptions);
             return details.transform(data => {
                 let {subject, details} = data;
-                return this.identityConstructor(subject, details, realm);
+                return this.identityConstructor(subject, details, options && options.identityOptions);
             });
         } catch (e) {
             return Promise.resolve(failure([AbstractAuth.error('bad tokens')]));
         }
     }
 
+    //TODO refactor: subject && realms -> options
     abstract grant(details: IAccessDetails, subject :string, realms? :string[]) :Promise<GenericResult<string>>
 
     static error = authError;

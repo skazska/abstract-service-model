@@ -26,7 +26,7 @@ describe('auth', () => {
         });
 
         it('#identify returns success instance of RegExIdentity', async () => {
-            let identityResult = await instance.identify('right', 'r1');
+            let identityResult = await instance.identify('right');
             identity = identityResult.get();
             expect(identity).to.have.property('access').which.is.a('function');
             expect(identity.subject).equal('subject');
@@ -54,7 +54,7 @@ describe('auth', () => {
             let tokenResult = await instance.grant({read: 'ok', write: 'demo'}, 'subject');
             token = tokenResult.get();
 
-            let identityResult = await instance.identify('right', 'r1');
+            let identityResult = await instance.identify('right');
             identity = identityResult.get();
 
             expect(identity.access('read').get()).equal('ok');

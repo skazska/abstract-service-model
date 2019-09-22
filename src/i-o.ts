@@ -1,5 +1,9 @@
+/**
+ * Module represents IO:
+ * AbstractIO class and infrastructure
+ */
 import {AbstractExecutable, IRunError} from "./executable";
-import {IAuth} from "./auth";
+import {IAbstractAuthIdentifyOptions, IAuth} from "./auth";
 import {GenericResult, success} from "./result";
 import {error, IError} from "./error";
 
@@ -12,15 +16,19 @@ export const isIOError = (error :IError) :error is IIOError => {
     return 'isIOError' in error;
 };
 
+/**
+ * creates IOError
+ * @param message
+ */
 export const ioError = (message :string) :IIOError => {
     const err :IIOError = error(message);
     err.isIOError = true;
     return err;
 };
 
-
+/** IO options */
 export interface IIOOptions {
-    realm? :string
+    identifyOptions? :IAbstractAuthIdentifyOptions
 }
 
 export interface IIO {
@@ -31,7 +39,11 @@ export interface IIO {
  * @class provides convert and handle external Input and service data (like auth tokens) to run executable (internal)
  */
 export abstract class AbstractIO<I, EI, EO, O> implements IIO {
-
+    /**
+     * @param executable - executable to run
+     * @param authenticator
+     * @param options
+     */
     protected constructor(
         protected executable :AbstractExecutable<EI, EO>,
         protected authenticator? :IAuth,
@@ -76,7 +88,7 @@ export abstract class AbstractIO<I, EI, EO, O> implements IIO {
                     return this.fail('auth', "can't extract tokens", authTokenResult.errors);
 
                 // identify session (check tokens/credentials)
-                authPassResult = await this.authenticator.identify(authTokenResult.get(), this.options.realm);
+                authPassResult = await this.authenticator.identify(authTokenResult.get(), this.options.identifyOptions);
                 if (authPassResult.isFailure)
                     return this.fail('auth', 'not identified', authPassResult.errors);
             } catch (e) {
