@@ -167,13 +167,12 @@ export interface IAuthOptions {
 /**
  * Auth identify options
  */
-export interface IAuthVerifyOptions {
-}
+export interface IAuthVerifyOptions {}
 
 /**  */
 export interface IAbstractAuthIdentifyOptions extends IAuthIdentifyOptions {
-    verifyOptions :IAuthVerifyOptions,
-    identityOptions :IAuthIdentityOptions
+    verifyOptions? :IAuthVerifyOptions,
+    identityOptions? :IAuthIdentityOptions
 }
 
 /**
@@ -189,7 +188,6 @@ export abstract class AbstractAuth implements IAuth {
         return Promise.resolve(success(this.options.secretSource));
     };
 
-    //TODO refactor: subject && realms -> options
     protected abstract verify(secret: any, token :string, options? :IAuthVerifyOptions) :Promise<GenericResult<IAuthData>>;
 
     async identify (token :string, options? :IAbstractAuthIdentifyOptions) :Promise<GenericResult<IAuthIdentity>> {
@@ -206,7 +204,6 @@ export abstract class AbstractAuth implements IAuth {
         }
     }
 
-    //TODO refactor: subject && realms -> options
     abstract grant(details: IAccessDetails, subject :string, options? :IAuthGrantOptions) :Promise<GenericResult<string>>
 
     static error = authError;
