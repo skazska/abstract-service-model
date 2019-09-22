@@ -1,14 +1,14 @@
-import {get} from "stack-trace";
+/**
+ * Module represents Error
+ */
+// import {get} from "stack-trace";
 
-export interface IError {
-    message :string,
-    stack?: any
+export interface IError extends Error{
+    message :string
 }
 
 export const error = (message :string) :IError => {
-    const err :IError = {
-        message: message
-    };
-    err.stack = get();
+    const err :IError = new Error (message);
+    // err.stack = get();
     return err;
 };

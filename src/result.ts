@@ -1,22 +1,48 @@
-export class GenericResult<T, E> {
+/**
+ * Module provides GenericResult class & failure success factories
+ */
+
+import {IError} from "./error";
+
+/**
+ * Represents result or failure
+ */
+export class GenericResult<T> {
+    /**
+     * @param _result result data
+     * @param _errors error list
+     */
     constructor (
         protected _result? :T,
-        protected _errors? :E[]
+        protected _errors? :IError[]
     ) {}
 
-    get errors () :E[] {
+    /**
+     * returns error list
+     */
+    get errors () :IError[] {
         return this._errors;
     }
 
+    /**
+     * indicates if there errors
+     */
     get isFailure () :boolean {
         return !!this._errors
     }
 
+    /**
+     * returns result
+     */
     get () :T {
         return this._result;
     }
 
-    error (err :E) :GenericResult<T, E> {
+    /**
+     * adds error
+     * @param err
+     */
+    error (err :IError) :GenericResult<T> {
         if (!this._errors) {
             this._errors = [err];
         } else {
@@ -25,12 +51,27 @@ export class GenericResult<T, E> {
         return this;
     }
 
-    success (data :T) :GenericResult<T, E> {
+    /**
+     * sets result data
+     * @param data
+     */
+    success (data :T) :GenericResult<T> {
         this._result = data;
         return this;
     }
 
-    mergeErrors (...results :GenericResult<any, E>[]) :GenericResult<T, E> {
+    /**
+     * represents self as GenericResult<any>
+     */
+    asFailure() :GenericResult<any> {
+        return this;
+    }
+
+    /**
+     * merges errors from another Result
+     * @param results
+     */
+    mergeErrors (...results :GenericResult<any>[]) :GenericResult<T> {
         results.forEach(result => {
             if (result.isFailure) {
                 this._errors = (this._errors || []).concat(result.errors);
@@ -40,26 +81,34 @@ export class GenericResult<T, E> {
         return this;
     }
 
-    wrap <T1, E1>(continuation :(data :T) => T1, errorConverter? :(error :E)=>E1) :GenericResult<T1, E1> {
-        if (this.isFailure)
-            return failure(errorConverter ? this.errors.map(errorConverter) : <E1[]><any>this.errors);
+    /**
+     * returns new result from this, with processed result or converted errors
+     * @param continuation
+     * @param errorConverter
+     */
+    transform <T1>(continuation :(data :T) => T1, errorConverter? :(error :IError)=>IError) :GenericResult<T1> {
+        if (this.isFailure) {
+            if (errorConverter) { this._errors = this._errors.map(errorConverter)}
+            return this.asFailure();
+        }
         try {
             return success(continuation(this.get()));
-        } catch (e) {
-            failure(errorConverter ? [errorConverter(e)] : [e]);
+        } catch (IError) {
+            failure([IError]);
         }
     }
 }
 
-export const failure = <E>(list :E[]) :GenericResult<null, E> => {
-    return new GenericResult<null, E>(null, list);
+export const failure = (list :IError[]) :GenericResult<null> => {
+    return new GenericResult<null>(null, list);
 };
 
-export const success = <T>(data :T) :GenericResult<T, never> => {
-    return new GenericResult<T, never>(data);
+export const success = <T>(data :T) :GenericResult<T> => {
+    return new GenericResult<T>(data);
 };
 
-export const mergeResults = (results :GenericResult<any,any>[]) :GenericResult<any[],any> => {
+export const mergeResults = (results :GenericResult<any>[]) :GenericResult<any[]> => {
+
     return results.reduce((merged, result) => {
         if (result.isFailure) {
             merged.mergeErrors(result);
@@ -67,5 +116,5 @@ export const mergeResults = (results :GenericResult<any,any>[]) :GenericResult<a
             merged.success(merged.get().concat(result.get()))
         }
         return merged;
-    }, new GenericResult<any[], any>([]));
+    }, new GenericResult<any[]>([]));
 };

@@ -13,7 +13,7 @@ export const isRunError = (error :IError) :error is IRunError => {
 };
 
 export interface IExecutable {
-    run(params? :any, identity? :IAuthIdentity) :Promise<GenericResult<any, IRunError>>;
+    run(params? :any, identity? :IAuthIdentity) :Promise<GenericResult<any>>;
 }
 
 export interface IExecutableConfig {
@@ -39,13 +39,13 @@ export abstract class AbstractExecutable<I, O> implements IExecutable {
         this.operation = props.operation;
     }
 
-    protected abstract _execute(params :I) :Promise<GenericResult<O, IRunError>>
+    protected abstract _execute(params :I) :Promise<GenericResult<O>>
 
-    protected _authenticate(identity :IAuthIdentity, params :I) :GenericResult<any, IAuthError> {
+    protected _authenticate(identity :IAuthIdentity, params :I) :GenericResult<any> {
         return identity.access(this.accessObject, this.operation);
     }
 
-    async run(params :I, identity? :IAuthIdentity) :Promise<GenericResult<O, IError>> {
+    async run(params :I, identity? :IAuthIdentity) :Promise<GenericResult<O>> {
         if (identity) {
             const authResult = this._authenticate(identity, params);
             if (authResult.isFailure) return authResult;

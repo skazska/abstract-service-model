@@ -19,7 +19,7 @@ export const modelError = (message :string, field? :string) => {
     return err;
 };
 
-export class ModelValidationResult extends GenericResult<any, IModelError> {}
+export class ModelValidationResult extends GenericResult<any> {}
 
 export interface IModel {
     /**
@@ -122,9 +122,9 @@ export interface IModelConstructor<K,P> {
  * model data adapter interface
  */
 export interface IModelDataAdepter<K,P> {
-    getKey (data :any) :GenericResult<K, IModelError>;
-    getProperties (data :any) :GenericResult<P, IModelError>;
-    getData (key :K, properties: P) :GenericResult<any, IModelError>;
+    getKey (data :any) :GenericResult<K>;
+    getProperties (data :any) :GenericResult<P>;
+    getData (key :K, properties: P) :GenericResult<any>;
 }
 
 /**
@@ -136,13 +136,13 @@ export class SimpleModelAdapter<K, P> implements IModelDataAdepter<K, P> {
         protected keys :K[keyof K][],
         protected props :P[keyof P][],
     ) {}
-    getKey <D extends K & P>(data :D) :GenericResult<K, IModelError> {
+    getKey <D extends K & P>(data :D) :GenericResult<K> {
         return success(pick(data, this.keys));
     };
-    getProperties <D extends K & P>(data :D) :GenericResult<P, IModelError> {
+    getProperties <D extends K & P>(data :D) :GenericResult<P> {
         return success(pick(data, this.props));
     };
-    getData <D extends K & P>(key: K, properties: P) :GenericResult<D, IModelError> {
+    getData <D extends K & P>(key: K, properties: P) :GenericResult<D> {
         let outputProps = pick(properties, this.props);
         return success({...key, ...outputProps});
     }
@@ -158,26 +158,26 @@ export class GenericModelFactory<K,P> {
         protected dataAdapter :IModelDataAdepter<K, P>
     ) { }
 
-    dataKey (data :any) :GenericResult<K, IModelError> {
+    dataKey (data :any) :GenericResult<K> {
         return this.dataAdapter.getKey(data);
     };
-    dataProperties (data :any) :GenericResult<P, IModelError> {
+    dataProperties (data :any) :GenericResult<P> {
         return this.dataAdapter.getProperties(data);
     };
-    dataModel (data :any) :GenericResult<GenericModel<K,P>, IModelError> {
+    dataModel (data :any) :GenericResult<GenericModel<K,P>> {
         const results = [this.dataKey(data), this.dataProperties(data)];
-        return <GenericResult<GenericModel<K,P>, IModelError>>mergeResults(results).wrap(
+        return <GenericResult<GenericModel<K,P>>>mergeResults(results).transform(
             (results) => { return new this.modelConstructor(results[0], results[1])}
         );
     };
-    model (key: K, props: P) :GenericResult<GenericModel<K,P>, IModelError> {
+    model (key: K, props: P) :GenericResult<GenericModel<K,P>> {
         try {
             return success(new this.modelConstructor(key, props));
         } catch (e) {
             return failure([modelError(e.message)]);
         }
     };
-    data (model :IModel) :GenericResult<any, IModelError> {
+    data (model :IModel) :GenericResult<any> {
         return this.dataAdapter.getData(model.getKey(), model.getProperties())
     }
 
