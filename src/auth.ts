@@ -208,7 +208,7 @@ export abstract class AbstractAuth implements IAuth {
     }
 
     //TODO refactor: subject && realms -> options
-    abstract grant(details: IAccessDetails, subject :string, realms? :string[]) :Promise<GenericResult<string>>
+    abstract grant(details: IAccessDetails, subject :string, options? :IAuthGrantOptions) :Promise<GenericResult<string>>
 
     static error = authError;
 }

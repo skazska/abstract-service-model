@@ -3,7 +3,6 @@ import {failure, success, GenericResult} from "../src/result";
 
 export class AuthTest extends AbstractAuth {
     _data: IAuthData;
-    _realms: string[];
 
     constructor (identityConstructor, options?) {
         super(identityConstructor, options);
@@ -14,14 +13,13 @@ export class AuthTest extends AbstractAuth {
         if (token === 'right' ) {
             result = success(this._data);
         } else {
-            result = failure([AbstractAuth.error('bad tokens', 'any', realm)]);
+            result = failure([AbstractAuth.error('bad tokens', 'any')]);
         }
         return Promise.resolve(result);
     };
 
-    grant(details: IAccessDetails, subject: string, realms?: string[]): Promise<GenericResult<string>> {
-        this._data = {details: details, subject: subject, realms: realms};
-        this._realms = realms;
+    grant(details: IAccessDetails, subject: string): Promise<GenericResult<string>> {
+        this._data = {details: details, subject: subject};
         return Promise.resolve(success('right'));
     }
 }
