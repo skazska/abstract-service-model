@@ -86,13 +86,15 @@ export class GenericResult<T> {
      * @param continuation
      * @param errorConverter
      */
-    transform (continuation :(data :T) => any, errorConverter? :(error :IError)=>IError) :GenericResult<any> {
-        if (this.isFailure)
-            return failure(errorConverter ? this.errors.map(errorConverter) : this.errors);
+    transform <T1>(continuation :(data :T) => T1, errorConverter? :(error :IError)=>IError) :GenericResult<T1> {
+        if (this.isFailure) {
+            if (errorConverter) { this._errors = this._errors.map(errorConverter)}
+            return this.asFailure();
+        }
         try {
             return success(continuation(this.get()));
         } catch (IError) {
-            failure(errorConverter ? [errorConverter(IError)] : [IError]);
+            failure([IError]);
         }
     }
 }
