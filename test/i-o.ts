@@ -35,8 +35,8 @@ export class IOTest extends AbstractIO <IInputTest, ITestModelKey, IModel, Outpu
         return success(input.auth);
     };
 
-    protected data(inputs: IInputTest) :GenericResult<ITestModelKey> {
-        return success(inputs.data);
+    protected data(inputs: IInputTest) :Promise<GenericResult<ITestModelKey>> {
+        return Promise.resolve(success(inputs.data));
     };
 
     protected success(result: IModel) :OutputTest {

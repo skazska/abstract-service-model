@@ -63,7 +63,7 @@ export abstract class AbstractIO<I, EI, EO, O> implements IIO {
     /**
      * to extract data for executable from external Input
      */
-    protected abstract data(inputs: I) :GenericResult<EI>;
+    protected abstract data(inputs: I) :Promise<GenericResult<EI>>;
 
     /**
      * to perform actions on successful executable run
