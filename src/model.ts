@@ -1,17 +1,27 @@
+/**
+ * Model represents data model template
+ */
 import {object as objectTools} from "@skazska/tools-data-transform";
 import {IError, error} from "./error";
 import {failure, GenericResult, mergeResults, success} from "./result";
 import pick = require("object.pick");
 
+/** model error structure */
 export interface IModelError extends IError {
     field? :string,
     isModelError? :boolean
 }
 
+/** model error type guard */
 export const isModelError = (error :IError) :error is IModelError => {
     return 'isModelError' in error;
 };
 
+/**
+ * creates new model error
+ * @param message
+ * @param field
+ */
 export const modelError = (message :string, field? :string) => {
     const err :IModelError = error(message);
     err.isModelError = true;
@@ -21,6 +31,9 @@ export const modelError = (message :string, field? :string) => {
 
 export class ModelValidationResult extends GenericResult<any> {}
 
+/**
+ * Model interface
+ */
 export interface IModel {
     /**
      * returns key fields

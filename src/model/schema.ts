@@ -1,3 +1,8 @@
+/**
+ * @module
+ * provides model schema template and infrastructure
+ */
+
 import {
     GenericModel,
     IModel,
@@ -7,6 +12,9 @@ import {
 } from "../model";
 import {failure, GenericResult, success} from "../result";
 
+/**
+ * javascript data types
+ */
 export enum JsTypes {
     string = 'string',
     number = 'number',
@@ -15,6 +23,9 @@ export enum JsTypes {
     object = 'object'
 }
 
+/**
+ * model field description structure
+ */
 export interface IFieldDescription {
     [property :string] :any
 }
@@ -22,23 +33,44 @@ export interface IFieldDescription {
 /**
  * field description and validation
  */
+
+/**
+ * model schema field interface
+ */
 export interface ISchemaField {
     name: string;
     fieldType: string;
+
+    /** implement, should generate field description */
     description() :IFieldDescription;
+
+    /**
+     * implement field validation logic
+     * @param value - field value
+     */
     validate(value: any) :IModelError[];
 }
 
+/**
+ * model schema validator interface
+ */
 export interface ISchemaValidator {
     name :string;
+
+    /** implement descriptions, should return validation description */
     description() :string;
+
+    /**implement check method should return null on success and check failure text on fail */
     check(value :any): null|string;
 }
 
+/**
+ * javascript type validator
+ */
 export class JSTypeSchemaValidator implements ISchemaValidator {
     public readonly name: string;
     constructor(public readonly dataType: JsTypes) {
-        this.name = 'required';
+        this.name = 'js type';
     };
 
     check(value: any): string | null {
@@ -50,6 +82,9 @@ export class JSTypeSchemaValidator implements ISchemaValidator {
     }
 }
 
+/**
+ * required validator
+ */
 export class RequiredSchemaValidator implements ISchemaValidator {
     public readonly name: string;
     constructor() {
@@ -65,6 +100,9 @@ export class RequiredSchemaValidator implements ISchemaValidator {
     }
 }
 
+/**
+ * schema field implementation
+ */
 export class SchemaField implements ISchemaField {
     constructor(
         public readonly name: string,
@@ -90,7 +128,7 @@ export class SchemaField implements ISchemaField {
 
 
 /**
- * describes interface of Mode Scheme
+ * describes interface of Model Schema
  */
 export interface ISchema {
     validateKey (key :any) :IModelError[];
@@ -105,24 +143,31 @@ export interface ISchema {
 
 type ISchemaFields = ISchemaField[];
 
+/**
+ * Model schema implementation
+ */
 export class ModelSchema implements ISchema {
     _keyFields :ISchemaFields;
     _propertyFields :ISchemaFields;
     _errors :IModelError[];
+
     constructor(keyFields :ISchemaFields, propertyFields :ISchemaFields) {
         this._keyFields = keyFields;
         this._propertyFields = propertyFields;
         this.clear();
     }
 
+    /** clears error messages */
     protected clear() {
         this._errors = [];
     }
 
+    /** returns valid status */
     isValid() :boolean {
         return !this._errors.length;
     }
 
+    /** returns validation error list */
     errors(): IModelError[] {
         return this._errors;
     }
@@ -163,13 +208,23 @@ export class ModelSchema implements ISchema {
     }
 }
 
+/** Model with schema constructor options*/
 export interface ISchemaModelOptions extends IModelOptions {
     schema: ISchema
 }
 
+/**
+ * Model with schema generic implementation
+ */
 export class GenericSchemaModel<K, P> extends GenericModel<K, P> implements IModel {
     protected _schema :ISchema;
 
+    /**
+     * expects schema instance in options
+     * @param key
+     * @param properties
+     * @param options
+     */
     constructor(key :K, properties :P, options :ISchemaModelOptions) {
         super(key, properties, options);
     }

@@ -184,18 +184,21 @@ export abstract class AbstractAuth implements IAuth {
         protected options :IAuthOptions = {}
     ) {}
 
+    /** resolves secret for hashing/crypting */
     protected secret() :Promise<GenericResult<any>> {
         return Promise.resolve(success(this.options.secretSource));
     };
 
+    /** implement auth token verification */
     protected abstract verify(secret: any, token :string, options? :IAuthVerifyOptions) :Promise<GenericResult<IAuthData>>;
 
+    /** resolves identity data from token */
     async identify (token :string, options? :IAbstractAuthIdentifyOptions) :Promise<GenericResult<IAuthIdentity>> {
         try {
             let secret = await this.secret();
             if (secret.isFailure) return secret.asFailure();
-            let details = await this.verify(secret.get(), token, options && options.verifyOptions);
-            return details.transform(data => {
+            let detailsResult = await this.verify(secret.get(), token, options && options.verifyOptions);
+            return detailsResult.transform(data => {
                 let {subject, details} = data;
                 return this.identityConstructor(subject, details, options && options.identityOptions);
             });
@@ -204,6 +207,7 @@ export abstract class AbstractAuth implements IAuth {
         }
     }
 
+    /** implement token generation from identity data */
     abstract grant(details: IAccessDetails, subject :string, options? :IAuthGrantOptions) :Promise<GenericResult<string>>
 
     static error = authError;
