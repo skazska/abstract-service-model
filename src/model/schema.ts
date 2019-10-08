@@ -266,7 +266,7 @@ export interface IFieldMap {
 export class SchemaModelAdapter<K, P, D> implements IModelDataAdepter<K, P> {
     constructor(protected schema :ISchema, public fieldMap: IFieldMap) {};
 
-    protected extract(fields :ISchemaFields, data :any) :any{
+    protected extract(fields :ISchemaFields, data :D) :any{
         return fields.reduce((result, field) => {
             if (this.fieldMap) {
                 const dataName = this.fieldMap[field.name];
@@ -278,15 +278,15 @@ export class SchemaModelAdapter<K, P, D> implements IModelDataAdepter<K, P> {
         }, {});
     }
 
-    protected extractKey(data: any) :K {
+    protected extractKey(data: D) :K {
         return this.extract(this.schema.keyFields(), data);
     };
 
-    protected extractProperties(data: any) :P {
+    protected extractProperties(data: D) :P {
         return this.extract(this.schema.propertyFields(), data);
     };
 
-    protected compose(fields :ISchemaFields, data :any) :any {
+    protected compose(fields :ISchemaFields, data :Partial<K & D>) :any {
         return fields.reduce((result, field) => {
             if (this.fieldMap) {
                 const dataName = this.fieldMap[field.name];
